@@ -74,6 +74,17 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
 .topbar-center { display: flex; align-items: center; gap: 16px; }
 .topbar-timer { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600; color: var(--accent-light); background: rgba(37,99,235,0.1); padding: 4px 12px; border-radius: 6px; }
 .topbar-prompts { font-size: 13px; color: var(--text-secondary); }
+.topbar-score { font-size: 14px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 6px; }
+.topbar-score span { color: var(--accent-light); font-size: 18px; }
+
+/* PER-PROMPT SCORE BADGE */
+.prompt-score-badge { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; animation: fadeIn 0.5s ease; }
+.prompt-score-badge.low { background: rgba(239,68,68,0.12); color: #f87171; }
+.prompt-score-badge.mid { background: rgba(245,158,11,0.12); color: #fbbf24; }
+.prompt-score-badge.good { background: rgba(37,99,235,0.12); color: var(--accent-light); }
+.prompt-score-badge.great { background: rgba(16,185,129,0.12); color: #34d399; }
+.prompt-score-bar { width: 60px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+.prompt-score-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
 .topbar-right { display: flex; align-items: center; gap: 12px; }
 .btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; }
 .btn-brief { background: rgba(37,99,235,0.1); color: var(--accent-light); border: 1px solid var(--border-accent); }
@@ -248,6 +259,9 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
       <button class="btn btn-brief" onclick="toggleBriefDrawer()">📋 View Brief</button>
       <div class="topbar-timer" id="topTimer">00:00</div>
       <div class="topbar-prompts" id="topPrompts">Prompts: 0</div>
+      <div class="topbar-score" id="topScore" style="display:none;">
+        <span id="topScoreVal">0</span>/100
+      </div>
     </div>
     <div class="topbar-right">
       <button class="btn btn-abandon" onclick="abandonSim()">✕ Abandon</button>
@@ -331,6 +345,7 @@ const COMP_NAMES = {
 
 let sessionId = null, scenarioData = null, scenarioId = null;
 let promptCount = 0, timerInterval = null, startTime = null, isLoading = false;
+let promptScores = []; // Track each prompt's score
 
 async function init() {
   const params = new URLSearchParams(window.location.search);
@@ -512,9 +527,8 @@ function showPromptSuggestions() {
   const container = document.getElementById('promptSuggestions');
   if (!container || !code || !SUGGESTIONS[code]) return;
   const suggestions = SUGGESTIONS[code][lang] || SUGGESTIONS[code]['en'];
-  const labels = TAG_LABELS[lang] || TAG_LABELS['en'];
-  container.innerHTML = `<div class="prompt-suggestions-label">${lang==='fr' ? '💡 Choisissez un prompt — du plus simple au plus avancé :' : '💡 Choose a prompt to start — from simplest to most advanced:'}</div>` +
-    suggestions.map((s, i) => `<button class="prompt-suggestion" onclick="useSuggestion(${i})"><span class="suggestion-tag ${s.tag}">${labels[s.tag]}</span><span class="prompt-suggestion-text">${s.text}</span></button>`).join('');
+  container.innerHTML = `<div class="prompt-suggestions-label">${lang==='fr' ? '💡 Choisissez un prompt pour commencer, ou écrivez le vôtre :' : '💡 Choose a prompt to start with, or write your own:'}</div>` +
+    suggestions.map((s, i) => `<button class="prompt-suggestion" onclick="useSuggestion(${i})"><span class="prompt-suggestion-text">${s.text}</span></button>`).join('');
 }
 
 function useSuggestion(index) {
@@ -558,7 +572,11 @@ async function sendMessage() {
     hideTyping();
     if (!res.ok) { showToast(data.error,'error'); return; }
     addMessage('assistant',data.claude.content);
-    if (data.aria) { addAriaTip(data.aria.tip,data.aria.type,data.promptNumber); if(data.aria.scores) updateScores(data.aria.scores); }
+    if (data.aria) {
+      addAriaTip(data.aria.tip, data.aria.type, data.promptNumber);
+      if (data.aria.scores) updateScores(data.aria.scores);
+      if (data.aria.prompt_score !== undefined) showPromptScore(data.aria.prompt_score, data.promptNumber);
+    }
   } catch(e) { hideTyping(); showToast('Failed to send message.','error'); }
   finally { isLoading=false; document.getElementById('chatSend').disabled=false; document.getElementById('chatInput').focus(); }
 }
@@ -605,6 +623,37 @@ function updateScores(scores) {
   }
 }
 
+function showPromptScore(score, promptNum) {
+  promptScores.push(score);
+  const avg = Math.round(promptScores.reduce((a,b) => a+b, 0) / promptScores.length);
+
+  // Determine color tier
+  let tier = 'low', color = '#f87171';
+  if (score >= 80) { tier = 'great'; color = '#34d399'; }
+  else if (score >= 60) { tier = 'good'; color = '#3b82f6'; }
+  else if (score >= 40) { tier = 'mid'; color = '#fbbf24'; }
+
+  // Add score badge to chat after the last assistant message
+  const container = document.getElementById('chatMessages');
+  const badge = document.createElement('div');
+  badge.className = `prompt-score-badge ${tier}`;
+  badge.innerHTML = `${lang==='fr' ? 'Score du prompt' : 'Prompt Score'}: ${score}/100 <div class="prompt-score-bar"><div class="prompt-score-fill" style="width:${score}%;background:${color}"></div></div>`;
+  container.appendChild(badge);
+  container.scrollTop = container.scrollHeight;
+
+  // Update topbar average
+  const topScore = document.getElementById('topScore');
+  topScore.style.display = 'block';
+  document.getElementById('topScoreVal').textContent = avg;
+
+  // Color the average
+  if (avg >= 80) topScore.style.color = '#34d399';
+  else if (avg >= 60) topScore.style.color = '#3b82f6';
+  else if (avg >= 40) topScore.style.color = '#fbbf24';
+  else topScore.style.color = '#f87171';
+  document.getElementById('topScoreVal').style.color = 'inherit';
+}
+
 async function requestHint() {
   if(isLoading) return;
   addAriaTip(lang==='fr'
@@ -637,6 +686,7 @@ async function completeSim() {
     const data=await res.json();
     if(!res.ok){showToast(data.error,'error');return;}
     localStorage.setItem('claudesim_debrief',JSON.stringify(data.debrief));
+    localStorage.setItem('claudesim_prompt_scores',JSON.stringify(promptScores));
     window.location.href=`/debrief?session=${sessionId}`;
   } catch(e) { showToast('Failed to complete simulation','error'); document.getElementById('btnSubmit').disabled=false; document.getElementById('btnSubmit').textContent='✓ Submit Deliverable'; }
 }

@@ -31,13 +31,15 @@ RULES:
 
 For each prompt you observe, provide:
 1. A brief coaching tip (or encouragement if the prompt is well-crafted)
-2. Updated scores for each competency (1-5) based on cumulative performance
-3. The type of intervention: "nudge", "micro-lesson", "alert", "encouragement", or "redirect"
+2. A prompt_score from 0-100 rating how effective this specific prompt is for achieving the scenario goal (0=completely vague/off-target, 50=adequate but missing key elements, 80+=well-crafted with clear structure and techniques, 100=expert-level prompt)
+3. Updated scores for each competency (1-5) based on cumulative performance
+4. The type of intervention: "nudge", "micro-lesson", "alert", "encouragement", or "redirect"
 
 Respond ONLY in valid JSON format:
 {
   "tip": "Your coaching feedback here",
   "type": "nudge|micro-lesson|alert|encouragement|redirect",
+  "prompt_score": 45,
   "scores": {"c1": 3, "c2": 2, "c3": 3, "c4": 2, "c5": 3, "c6": 2},
   "technique_detected": ["chain-of-thought", "specific-format"] 
 }`;
@@ -157,6 +159,7 @@ Current prompt to analyze:
       aria: {
         tip: ariaData.tip,
         type: ariaData.type,
+        prompt_score: ariaData.prompt_score || 50,
         scores: ariaData.scores,
         techniques: ariaData.technique_detected || []
       },
