@@ -1,10 +1,9 @@
 {
   "rewrites": [
-    { "source": "/dashboard", "destination": "/public/dashboard.html" },
-    { "source": "/simulation", "destination": "/public/simulation.html" },
-    { "source": "/scenarios", "destination": "/public/dashboard.html" },
-    { "source": "/admin", "destination": "/public/admin.html" },
-    { "source": "/debrief", "destination": "/public/debrief.html" },
-    { "source": "/((?!api/).*)", "destination": "/public/$1" }
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/simulation", "destination": "/simulation.html" },
+    { "source": "/scenarios", "destination": "/dashboard.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/debrief", "destination": "/debrief.html" }
   ]
 }
