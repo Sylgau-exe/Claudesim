@@ -94,7 +94,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
 .btn-abandon { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
 .btn-abandon:hover { border-color: var(--danger); color: var(--danger); }
 
-.sim-layout { display: grid; grid-template-columns: 1fr 300px; flex: 1; overflow: hidden; }
+.sim-layout { display: grid; grid-template-columns: 1fr 320px; flex: 1; overflow: hidden; }
 
 .panel-chat { display: flex; flex-direction: column; background: var(--bg-primary); overflow: hidden; }
 .chat-header { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
@@ -128,12 +128,12 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
 .aria-name { font-size: 16px; font-weight: 700; }
 .aria-role { font-size: 12px; color: var(--text-muted); }
 
-.comp-scores { display: flex; flex-direction: column; gap: 6px; }
-.comp-row { display: flex; align-items: center; gap: 8px; }
-.comp-label { font-size: 12px; font-weight: 700; color: var(--accent-light); width: 26px; flex-shrink: 0; }
-.comp-bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
-.comp-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s ease; }
-.comp-val { font-size: 12px; color: var(--text-muted); width: 18px; text-align: right; }
+.comp-scores { display: flex; flex-direction: column; gap: 8px; }
+.comp-row { display: flex; align-items: center; gap: 10px; }
+.comp-label { font-size: 13px; font-weight: 700; color: var(--accent-light); width: 28px; flex-shrink: 0; }
+.comp-bar-bg { flex: 1; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
+.comp-bar { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.5s ease; }
+.comp-val { font-size: 14px; font-weight: 700; color: var(--text-primary); width: 22px; text-align: right; }
 
 .aria-tips-area { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 .aria-tip { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; animation: fadeIn 0.4s ease; }
@@ -300,12 +300,13 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
           <div><div class="aria-name">ARIA</div><div class="aria-role">AI Readiness & Interaction Advisor</div></div>
         </div>
         <div class="comp-scores">
-          <div class="comp-row"><span class="comp-label">C1</span><div class="comp-bar-bg"><div class="comp-bar" id="barC1" style="width:0%"></div></div><span class="comp-val" id="valC1">-</span></div>
-          <div class="comp-row"><span class="comp-label">C2</span><div class="comp-bar-bg"><div class="comp-bar" id="barC2" style="width:0%"></div></div><span class="comp-val" id="valC2">-</span></div>
-          <div class="comp-row"><span class="comp-label">C3</span><div class="comp-bar-bg"><div class="comp-bar" id="barC3" style="width:0%"></div></div><span class="comp-val" id="valC3">-</span></div>
-          <div class="comp-row"><span class="comp-label">C4</span><div class="comp-bar-bg"><div class="comp-bar" id="barC4" style="width:0%"></div></div><span class="comp-val" id="valC4">-</span></div>
-          <div class="comp-row"><span class="comp-label">C5</span><div class="comp-bar-bg"><div class="comp-bar" id="barC5" style="width:0%"></div></div><span class="comp-val" id="valC5">-</span></div>
-          <div class="comp-row"><span class="comp-label">C6</span><div class="comp-bar-bg"><div class="comp-bar" id="barC6" style="width:0%"></div></div><span class="comp-val" id="valC6">-</span></div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);font-weight:600;margin-bottom:4px;">Competencies</div>
+          <div class="comp-row"><span class="comp-label">C1</span><div class="comp-bar-bg"><div class="comp-bar" id="barC1" style="width:0%"></div></div><span class="comp-val" id="valC1">—</span></div>
+          <div class="comp-row"><span class="comp-label">C2</span><div class="comp-bar-bg"><div class="comp-bar" id="barC2" style="width:0%"></div></div><span class="comp-val" id="valC2">—</span></div>
+          <div class="comp-row"><span class="comp-label">C3</span><div class="comp-bar-bg"><div class="comp-bar" id="barC3" style="width:0%"></div></div><span class="comp-val" id="valC3">—</span></div>
+          <div class="comp-row"><span class="comp-label">C4</span><div class="comp-bar-bg"><div class="comp-bar" id="barC4" style="width:0%"></div></div><span class="comp-val" id="valC4">—</span></div>
+          <div class="comp-row"><span class="comp-label">C5</span><div class="comp-bar-bg"><div class="comp-bar" id="barC5" style="width:0%"></div></div><span class="comp-val" id="valC5">—</span></div>
+          <div class="comp-row"><span class="comp-label">C6</span><div class="comp-bar-bg"><div class="comp-bar" id="barC6" style="width:0%"></div></div><span class="comp-val" id="valC6">—</span></div>
         </div>
       </div>
       <div class="aria-tips-area" id="ariaTips">
@@ -619,7 +620,14 @@ function updateScores(scores) {
     const bar=document.getElementById(`barC${num}`);
     const valEl=document.getElementById(`valC${num}`);
     if(bar) bar.style.width=(val/5*100)+'%';
-    if(valEl) valEl.textContent=val;
+    if(valEl) {
+      valEl.textContent=val+'/5';
+      // Color code
+      if (val >= 4) { valEl.style.color='#34d399'; bar.style.background='#10b981'; }
+      else if (val >= 3) { valEl.style.color='#3b82f6'; bar.style.background='#2563eb'; }
+      else if (val >= 2) { valEl.style.color='#fbbf24'; bar.style.background='#f59e0b'; }
+      else { valEl.style.color='#f87171'; bar.style.background='#ef4444'; }
+    }
   }
 }
 
