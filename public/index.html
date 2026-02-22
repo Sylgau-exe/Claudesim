@@ -269,7 +269,7 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
     <h1 data-i18n="hero_title">Learn <span class="gradient-text">Claude</span> by Doing</h1>
     <p data-i18n="hero_subtitle">Master AI prompting through interactive professional simulations. Real scenarios, real-time coaching, measurable skill progression.</p>
     <div class="hero-cta">
-      <button class="btn btn-primary" onclick="showModal('register')" data-i18n="hero_cta">Start Free Simulation →</button>
+      <button class="btn btn-primary" id="heroCta" onclick="showModal('register')" data-i18n="hero_cta">Start Free Simulation →</button>
       <a href="#how-it-works" class="btn btn-secondary" data-i18n="hero_cta2">See How It Works</a>
     </div>
     <div class="hero-stats">
@@ -447,7 +447,7 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
   <div class="container">
     <h2 data-i18n="cta_title">Ready to Master <span class="gradient-text">Claude</span>?</h2>
     <p data-i18n="cta_subtitle">Your first simulation is free. No credit card required.</p>
-    <button class="btn btn-primary" onclick="showModal('register')" data-i18n="cta_btn">Start Free Simulation →</button>
+    <button class="btn btn-primary" id="bottomCta" onclick="showModal('register')" data-i18n="cta_btn">Start Free Simulation →</button>
   </div>
 </section>
 
@@ -721,6 +721,11 @@ function updateNavAuth() {
   const navAuth = document.getElementById('navAuth');
   if (currentUser) {
     navAuth.innerHTML = `<div class="nav-user"><span class="nav-user-name">${currentUser.name}</span><a href="/dashboard" class="btn btn-primary nav-cta">Dashboard</a></div>`;
+    // Update hero CTAs to go to dashboard instead of showing register modal
+    const heroCta = document.getElementById('heroCta');
+    if (heroCta) { heroCta.onclick = () => window.location.href = '/dashboard'; heroCta.textContent = lang === 'fr' ? 'Aller au tableau de bord →' : 'Go to Dashboard →'; }
+    const bottomCta = document.getElementById('bottomCta');
+    if (bottomCta) { bottomCta.onclick = () => window.location.href = '/dashboard'; bottomCta.textContent = lang === 'fr' ? 'Aller au tableau de bord →' : 'Go to Dashboard →'; }
   }
 }
 
