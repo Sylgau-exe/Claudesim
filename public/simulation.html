@@ -187,6 +187,10 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
 .prompt-suggestion .suggestion-tag.custom { background: rgba(37,99,235,0.15); color: var(--accent-light); }
 .prompt-suggestion-text { display: block; }
 
+/* ITERATION GUIDE */
+.iteration-guide { background: rgba(37,99,235,0.08); border: 1px dashed var(--border-accent); border-radius: 10px; padding: 12px 16px; font-size: 14px; color: var(--accent-light); line-height: 1.5; margin-top: 4px; animation: fadeIn 0.5s ease; }
+.iteration-guide.ready { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.3); color: #34d399; }
+
 .typing-indicator { display: flex; gap: 4px; padding: 8px 0; }
 .typing-dot { width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; animation: bounce 1.4s infinite; }
 .typing-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -650,26 +654,48 @@ function showPromptScore(score, promptNum) {
   promptScores.push(score);
   const avg = Math.round(promptScores.reduce((a,b) => a+b, 0) / promptScores.length);
 
-  // Determine color tier
   let tier = 'low', color = '#f87171';
   if (score >= 80) { tier = 'great'; color = '#34d399'; }
   else if (score >= 60) { tier = 'good'; color = '#3b82f6'; }
   else if (score >= 40) { tier = 'mid'; color = '#fbbf24'; }
 
-  // Add score badge to chat after the last assistant message
   const container = document.getElementById('chatMessages');
   const badge = document.createElement('div');
   badge.className = `prompt-score-badge ${tier}`;
   badge.innerHTML = `${lang==='fr' ? 'Score du prompt' : 'Prompt Score'}: ${score}/100 <div class="prompt-score-bar"><div class="prompt-score-fill" style="width:${score}%;background:${color}"></div></div>`;
   container.appendChild(badge);
+
+  // Iteration guidance
+  const MIN_PROMPTS = 3;
+  if (promptCount < MIN_PROMPTS) {
+    const guide = document.createElement('div');
+    guide.className = 'iteration-guide';
+    const remaining = MIN_PROMPTS - promptCount;
+    let hint_en, hint_fr;
+    if (promptCount === 1) {
+      hint_en = `📝 Prompt ${promptCount}/3 — Now review Claude's response. Is it exactly what you need? Refine your prompt to improve the result. (${remaining} more required)`;
+      hint_fr = `📝 Prompt ${promptCount}/3 — Examinez la réponse de Claude. Est-ce exactement ce dont vous avez besoin ? Affinez votre prompt pour améliorer le résultat. (${remaining} de plus requis)`;
+    } else {
+      hint_en = `📝 Prompt ${promptCount}/3 — Good iteration! Keep refining. Add structure, constraints, or fix what's missing. (${remaining} more required)`;
+      hint_fr = `📝 Prompt ${promptCount}/3 — Bonne itération ! Continuez à affiner. Ajoutez de la structure, des contraintes, ou corrigez ce qui manque. (${remaining} de plus requis)`;
+    }
+    guide.textContent = lang==='fr' ? hint_fr : hint_en;
+    container.appendChild(guide);
+  } else if (promptCount === MIN_PROMPTS) {
+    const guide = document.createElement('div');
+    guide.className = 'iteration-guide ready';
+    guide.textContent = lang==='fr'
+      ? '✅ Minimum atteint ! Vous pouvez soumettre ou continuer à itérer pour un meilleur score.'
+      : '✅ Minimum reached! You can submit now or keep iterating for a better score.';
+    container.appendChild(guide);
+  }
+
   container.scrollTop = container.scrollHeight;
 
   // Update topbar average
   const topScore = document.getElementById('topScore');
   topScore.style.display = 'block';
   document.getElementById('topScoreVal').textContent = avg;
-
-  // Color the average
   if (avg >= 80) topScore.style.color = '#34d399';
   else if (avg >= 60) topScore.style.color = '#3b82f6';
   else if (avg >= 40) topScore.style.color = '#fbbf24';
