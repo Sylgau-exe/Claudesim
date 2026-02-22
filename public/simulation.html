@@ -156,6 +156,13 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
 .brief-drawer li { padding: 8px 0; font-size: 14px; color: var(--text-secondary); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
 .brief-drawer li:last-child { border-bottom: none; }
 
+/* MISSION BANNER */
+.mission-banner { background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(37,99,235,0.04)); border: 1px solid var(--border-accent); border-radius: 12px; padding: 16px 20px; margin-bottom: 8px; }
+.mission-banner-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-light); margin-bottom: 6px; }
+.mission-banner-text { font-size: 15px; color: var(--text-primary); line-height: 1.6; }
+.mission-banner-meta { display: flex; gap: 16px; margin-top: 10px; }
+.mission-banner-tag { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+
 /* PROMPT SUGGESTIONS */
 .prompt-suggestions { padding: 8px 0; animation: fadeIn 0.5s ease; }
 .prompt-suggestions-label { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; }
@@ -254,6 +261,14 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
         <div class="msg msg-assistant">
           <div class="msg-label">Claude</div>
           <div class="msg-bubble" id="welcomeMsg">Welcome! I'm ready to help you with this scenario. Choose a suggested prompt below, or write your own.</div>
+        </div>
+        <div class="mission-banner" id="missionBanner" style="display:none;">
+          <div class="mission-banner-label">🎯 <span id="missionBannerLabel">Your Mission</span></div>
+          <div class="mission-banner-text" id="missionBannerText"></div>
+          <div class="mission-banner-meta">
+            <span class="mission-banner-tag">⏱ <span id="missionDuration"></span></span>
+            <span class="mission-banner-tag">📊 <span id="missionLevel"></span></span>
+          </div>
         </div>
         <div class="prompt-suggestions" id="promptSuggestions"></div>
       </div>
@@ -390,6 +405,13 @@ function switchToSim() {
   const criteria = s.evaluation_criteria||[];
   document.getElementById('drawerCriteria').innerHTML = criteria.map(c=>`<li>${c.criterion} <span class="brief-criteria-weight">${c.weight}%</span></li>`).join('');
   startTimer();
+  // Show mission banner
+  const desc = lang==='fr' ? (s.description_fr||s.description_en) : s.description_en;
+  document.getElementById('missionBannerText').textContent = desc;
+  document.getElementById('missionDuration').textContent = (s.duration_min||30) + (lang==='fr' ? ' min' : ' min');
+  document.getElementById('missionLevel').textContent = s.level.charAt(0).toUpperCase() + s.level.slice(1);
+  if (lang==='fr') document.getElementById('missionBannerLabel').textContent = 'Votre mission';
+  document.getElementById('missionBanner').style.display = 'block';
   showPromptSuggestions();
   document.getElementById('welcomeMsg').textContent = lang==='fr'
     ? 'Bienvenue ! Choisissez un prompt suggéré ci-dessous, ou écrivez le vôtre.'
