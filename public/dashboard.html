@@ -93,6 +93,7 @@ main{padding:40px 0;}
   <a href="/" class="nav-logo">Claude<span>Sim</span></a>
   <div class="nav-right">
     <a href="/">Home</a>
+    <a href="/admin" id="adminLink" style="display:none;color:#f59e0b;font-weight:600;">⚙️ Admin</a>
     <span id="userPlan"></span>
     <span id="userName" style="font-size:14px;color:var(--text-secondary)"></span>
     <a href="#" onclick="logout()" style="font-size:13px;color:var(--text-muted)">Logout</a>
@@ -162,6 +163,7 @@ async function init() {
     document.getElementById('userName').textContent = userData.name;
     document.getElementById('welcomeTitle').textContent = `Welcome back, ${userData.name.split(' ')[0]}!`;
     document.getElementById('userPlan').innerHTML = `<span class="badge-plan ${userData.plan}">${userData.plan}</span>`;
+    if (userData.isAdmin) document.getElementById('adminLink').style.display = 'inline';
   } catch(e) { window.location.href = '/'; return; }
 
   loadDashboard();
