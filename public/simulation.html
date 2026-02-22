@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClaudeSim — Simulation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0f1e; --bg-secondary: #0f172a; --bg-card: #151d30; --bg-input: #111827;
+  --text-primary: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #64748b;
+  --accent: #2563eb; --accent-light: #3b82f6; --accent-glow: rgba(37,99,235,0.3);
+  --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+  --border: rgba(255,255,255,0.08); --border-accent: rgba(37,99,235,0.3);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); height: 100vh; overflow: hidden; }
+
+/* TOP BAR */
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); height: 52px; }
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.topbar-logo { font-size: 18px; font-weight: 800; }
+.topbar-logo span { color: var(--accent-light); }
+.topbar-scenario { font-size: 13px; color: var(--text-secondary); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-center { display: flex; align-items: center; gap: 16px; }
+.topbar-timer { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600; color: var(--accent-light); background: rgba(37,99,235,0.1); padding: 4px 12px; border-radius: 6px; }
+.topbar-prompts { font-size: 12px; color: var(--text-muted); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; }
+.btn-submit { background: var(--success); color: white; }
+.btn-submit:hover { background: #059669; }
+.btn-abandon { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+.btn-abandon:hover { border-color: var(--danger); color: var(--danger); }
+
+/* MAIN LAYOUT — THREE PANELS */
+.sim-layout { display: grid; grid-template-columns: 280px 1fr 280px; height: calc(100vh - 52px); }
+
+/* LEFT PANEL — BRIEF */
+.panel-brief { background: var(--bg-secondary); border-right: 1px solid var(--border); overflow-y: auto; padding: 20px; }
+.panel-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 16px; }
+.brief-scenario { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+.brief-section { margin-bottom: 20px; }
+.brief-section h4 { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+.brief-criteria { font-size: 12px; color: var(--text-secondary); }
+.brief-criteria li { padding: 4px 0; list-style: none; display: flex; align-items: center; gap: 6px; }
+.brief-criteria li::before { content: '•'; color: var(--accent-light); }
+
+/* COMPETENCY BARS */
+.comp-scores { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.comp-row { display: flex; align-items: center; gap: 8px; }
+.comp-label { font-size: 11px; font-weight: 700; color: var(--accent-light); width: 24px; flex-shrink: 0; }
+.comp-bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.comp-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s ease; }
+.comp-val { font-size: 11px; color: var(--text-muted); width: 16px; text-align: right; }
+
+/* CENTER PANEL — CLAUDE CHAT */
+.panel-chat { display: flex; flex-direction: column; background: var(--bg-primary); }
+.chat-header { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.chat-header-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; }
+.chat-header span { font-size: 13px; color: var(--text-secondary); }
+.chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.msg { max-width: 85%; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.msg-user { align-self: flex-end; }
+.msg-assistant { align-self: flex-start; }
+.msg-bubble { padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; }
+.msg-user .msg-bubble { background: var(--accent); color: white; border-bottom-right-radius: 4px; }
+.msg-assistant .msg-bubble { background: var(--bg-card); border: 1px solid var(--border); border-bottom-left-radius: 4px; color: var(--text-primary); }
+.msg-assistant .msg-bubble pre { background: var(--bg-input); padding: 10px; border-radius: 6px; overflow-x: auto; font-size: 13px; margin: 8px 0; font-family: 'JetBrains Mono', monospace; }
+.msg-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* CHAT INPUT */
+.chat-input-area { padding: 16px 20px; border-top: 1px solid var(--border); background: var(--bg-secondary); }
+.chat-input-wrap { display: flex; gap: 10px; align-items: flex-end; }
+.chat-input { flex: 1; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text-primary); font-size: 14px; font-family: 'JetBrains Mono', monospace; resize: none; outline: none; min-height: 44px; max-height: 120px; transition: border-color 0.2s; }
+.chat-input:focus { border-color: var(--accent); }
+.chat-input::placeholder { color: var(--text-muted); }
+.chat-send { width: 44px; height: 44px; background: var(--accent); border: none; border-radius: 10px; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+.chat-send:hover { background: var(--accent-light); }
+.chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* RIGHT PANEL — ARIA COACH */
+.panel-aria { background: var(--bg-secondary); border-left: 1px solid var(--border); overflow-y: auto; padding: 20px; }
+.aria-avatar { width: 48px; height: 48px; background: linear-gradient(135deg, #1e3a5f, #2563eb); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 12px; }
+.aria-name { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+.aria-role { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+
+.aria-tips { display: flex; flex-direction: column; gap: 12px; }
+.aria-tip { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; animation: fadeIn 0.4s ease; }
+.aria-tip-type { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+.aria-tip-type.nudge { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.aria-tip-type.micro-lesson { background: rgba(37,99,235,0.15); color: var(--accent-light); }
+.aria-tip-type.alert { background: rgba(239,68,68,0.15); color: #f87171; }
+.aria-tip-type.encouragement { background: rgba(16,185,129,0.15); color: #34d399; }
+.aria-tip-type.redirect { background: rgba(168,85,247,0.15); color: #c084fc; }
+.aria-tip-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.aria-tip-num { font-size: 10px; color: var(--text-muted); margin-top: 6px; }
+
+.aria-waiting { text-align: center; padding: 32px 0; }
+.aria-waiting-icon { font-size: 32px; margin-bottom: 8px; }
+.aria-waiting p { font-size: 13px; color: var(--text-muted); }
+
+/* HINT BUTTON */
+.aria-hint-btn { width: 100%; margin-top: 16px; padding: 10px; background: rgba(37,99,235,0.1); border: 1px solid var(--border-accent); border-radius: 8px; color: var(--accent-light); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.aria-hint-btn:hover { background: rgba(37,99,235,0.2); }
+
+/* LOADING */
+.typing-indicator { display: flex; gap: 4px; padding: 8px 0; }
+.typing-dot { width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; animation: bounce 1.4s infinite; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+
+/* TOAST */
+.toast { position: fixed; top: 60px; right: 20px; padding: 12px 20px; border-radius: 8px; font-size: 14px; z-index: 100; transform: translateX(150%); transition: transform 0.3s; }
+.toast.show { transform: translateX(0); }
+.toast.success { background: #065f46; color: #a7f3d0; border: 1px solid #10b981; }
+.toast.error { background: #7f1d1d; color: #fecaca; border: 1px solid #ef4444; }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .sim-layout { grid-template-columns: 1fr; }
+  .panel-brief, .panel-aria { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">Claude<span>Sim</span></div>
+    <div class="topbar-scenario" id="topScenario">Loading scenario...</div>
+  </div>
+  <div class="topbar-center">
+    <div class="topbar-timer" id="topTimer">00:00</div>
+    <div class="topbar-prompts" id="topPrompts">Prompts: 0</div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-abandon" onclick="abandonSim()">✕ Abandon</button>
+    <button class="btn btn-submit" onclick="completeSim()" id="btnSubmit">✓ Submit Deliverable</button>
+  </div>
+</div>
+
+<!-- THREE-PANEL LAYOUT -->
+<div class="sim-layout">
+
+  <!-- LEFT: BRIEF -->
+  <div class="panel-brief">
+    <div class="panel-title" id="briefLabel">📋 Scenario Brief</div>
+    <div class="brief-scenario" id="briefText">Loading...</div>
+    
+    <div class="brief-section">
+      <h4 id="critLabel">Evaluation Criteria</h4>
+      <ul class="brief-criteria" id="briefCriteria"></ul>
+    </div>
+
+    <div class="brief-section">
+      <h4 id="compLabel">Your Competencies</h4>
+      <div class="comp-scores" id="compScores">
+        <div class="comp-row"><span class="comp-label">C1</span><div class="comp-bar-bg"><div class="comp-bar" id="barC1" style="width:0%"></div></div><span class="comp-val" id="valC1">-</span></div>
+        <div class="comp-row"><span class="comp-label">C2</span><div class="comp-bar-bg"><div class="comp-bar" id="barC2" style="width:0%"></div></div><span class="comp-val" id="valC2">-</span></div>
+        <div class="comp-row"><span class="comp-label">C3</span><div class="comp-bar-bg"><div class="comp-bar" id="barC3" style="width:0%"></div></div><span class="comp-val" id="valC3">-</span></div>
+        <div class="comp-row"><span class="comp-label">C4</span><div class="comp-bar-bg"><div class="comp-bar" id="barC4" style="width:0%"></div></div><span class="comp-val" id="valC4">-</span></div>
+        <div class="comp-row"><span class="comp-label">C5</span><div class="comp-bar-bg"><div class="comp-bar" id="barC5" style="width:0%"></div></div><span class="comp-val" id="valC5">-</span></div>
+        <div class="comp-row"><span class="comp-label">C6</span><div class="comp-bar-bg"><div class="comp-bar" id="barC6" style="width:0%"></div></div><span class="comp-val" id="valC6">-</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER: CLAUDE CHAT -->
+  <div class="panel-chat">
+    <div class="chat-header">
+      <div class="chat-header-dot"></div>
+      <span>Claude — Ready</span>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg msg-assistant">
+        <div class="msg-label">Claude</div>
+        <div class="msg-bubble" id="welcomeMsg">Welcome! I'm ready to help you with this scenario. Write your first prompt below to get started.</div>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <div class="chat-input-wrap">
+        <textarea class="chat-input" id="chatInput" placeholder="Write your prompt to Claude..." rows="1" onkeydown="handleKeydown(event)"></textarea>
+        <button class="chat-send" id="chatSend" onclick="sendMessage()">→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: ARIA COACH -->
+  <div class="panel-aria">
+    <div class="aria-avatar">🤖</div>
+    <div class="aria-name">ARIA</div>
+    <div class="aria-role">AI Readiness & Interaction Advisor</div>
+    
+    <div class="aria-tips" id="ariaTips">
+      <div class="aria-waiting">
+        <div class="aria-waiting-icon">👀</div>
+        <p id="ariaWaiting">I'm watching. Send your first prompt and I'll analyze your technique.</p>
+      </div>
+    </div>
+
+    <button class="aria-hint-btn" onclick="requestHint()" id="hintBtn">💡 Ask ARIA for a Hint</button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '';
+const token = localStorage.getItem('auth_token');
+if (!token) window.location.href = '/?error=auth_required';
+
+const lang = localStorage.getItem('claudesim_lang') || 'en';
+let sessionId = null;
+let scenarioData = null;
+let promptCount = 0;
+let timerInterval = null;
+let startTime = null;
+let isLoading = false;
+
+// ========================
+// INIT
+// ========================
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const scenarioId = params.get('scenario');
+  sessionId = params.get('session');
+
+  if (sessionId) {
+    await resumeSession(sessionId);
+  } else if (scenarioId) {
+    await startNewSession(scenarioId);
+  } else {
+    window.location.href = '/dashboard';
+  }
+}
+
+async function startNewSession(scenarioId) {
+  try {
+    const res = await fetch(`${API}/api/simulation/start`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ scenarioId })
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.error, 'error'); setTimeout(() => window.location.href = '/dashboard', 2000); return; }
+    sessionId = data.session.id;
+    scenarioData = data.scenario;
+    populateBrief();
+    startTimer();
+    // Update URL
+    history.replaceState(null, '', `/simulation?session=${sessionId}`);
+  } catch(e) { showToast('Failed to start simulation', 'error'); }
+}
+
+async function resumeSession(sid) {
+  try {
+    const res = await fetch(`${API}/api/simulation/session?id=${sid}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (!res.ok) { window.location.href = '/dashboard'; return; }
+    
+    sessionId = data.session.id;
+    
+    // Load scenario info
+    const scRes = await fetch(`${API}/api/scenarios`);
+    const scData = await scRes.json();
+    scenarioData = scData.scenarios.find(s => s.id === data.session.scenarioId);
+    
+    populateBrief();
+    
+    // Replay messages
+    const msgs = document.getElementById('chatMessages');
+    msgs.innerHTML = '';
+    data.interactions.forEach(i => {
+      if (i.role === 'user') {
+        promptCount++;
+        addMessage('user', i.content);
+      } else if (i.role === 'assistant') {
+        addMessage('assistant', i.content);
+      } else if (i.role === 'coach') {
+        try {
+          const tip = JSON.parse(i.content);
+          addAriaTip(tip.tip, tip.type, promptCount);
+          if (tip.scores) updateScores(tip.scores);
+        } catch(e) {}
+      }
+    });
+    
+    document.getElementById('topPrompts').textContent = `Prompts: ${promptCount}`;
+    startTimer(new Date(data.session.startedAt));
+  } catch(e) { window.location.href = '/dashboard'; }
+}
+
+function populateBrief() {
+  if (!scenarioData) return;
+  const s = scenarioData;
+  document.getElementById('topScenario').textContent = `${s.code || ''} — ${lang === 'fr' ? s.title_fr : s.title_en}`;
+  document.getElementById('briefText').textContent = lang === 'fr' ? (s.description_fr || s.description_en) : s.description_en;
+  
+  const criteria = s.evaluation_criteria || [];
+  const critList = document.getElementById('briefCriteria');
+  critList.innerHTML = criteria.map(c => `<li>${c.criterion} (${c.weight}%)</li>`).join('');
+}
+
+// ========================
+// CHAT
+// ========================
+function handleKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  // Auto-resize textarea
+  e.target.style.height = 'auto';
+  e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const message = input.value.trim();
+  if (!message || isLoading) return;
+
+  isLoading = true;
+  document.getElementById('chatSend').disabled = true;
+  input.value = '';
+  input.style.height = 'auto';
+  
+  promptCount++;
+  document.getElementById('topPrompts').textContent = `Prompts: ${promptCount}`;
+
+  addMessage('user', message);
+  showTyping();
+
+  try {
+    const res = await fetch(`${API}/api/simulation/chat`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ sessionId, message })
+    });
+    const data = await res.json();
+    hideTyping();
+
+    if (!res.ok) { showToast(data.error, 'error'); return; }
+
+    addMessage('assistant', data.claude.content);
+
+    // ARIA coaching
+    if (data.aria) {
+      addAriaTip(data.aria.tip, data.aria.type, data.promptNumber);
+      if (data.aria.scores) updateScores(data.aria.scores);
+    }
+  } catch(e) {
+    hideTyping();
+    showToast('Failed to send message. Please try again.', 'error');
+  } finally {
+    isLoading = false;
+    document.getElementById('chatSend').disabled = false;
+    document.getElementById('chatInput').focus();
+  }
+}
+
+function addMessage(role, content) {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `msg msg-${role}`;
+  
+  // Simple markdown rendering
+  let html = content
+    .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+    .replace(/`([^`]+)`/g, '<code style="background:rgba(37,99,235,0.15);padding:2px 6px;border-radius:4px;font-size:13px;">$1</code>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+
+  div.innerHTML = `<div class="msg-label">${role === 'user' ? 'You' : 'Claude'}</div><div class="msg-bubble">${html}</div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping() {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.id = 'typingIndicator';
+  div.className = 'msg msg-assistant';
+  div.innerHTML = `<div class="msg-label">Claude</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+function hideTyping() { document.getElementById('typingIndicator')?.remove(); }
+
+// ========================
+// ARIA COACHING
+// ========================
+function addAriaTip(tip, type, num) {
+  const container = document.getElementById('ariaTips');
+  // Remove waiting message
+  container.querySelector('.aria-waiting')?.remove();
+  
+  const div = document.createElement('div');
+  div.className = 'aria-tip';
+  div.innerHTML = `
+    <span class="aria-tip-type ${type || 'nudge'}">${type || 'nudge'}</span>
+    <div class="aria-tip-text">${tip}</div>
+    <div class="aria-tip-num">After prompt #${num}</div>
+  `;
+  container.appendChild(div);
+  container.parentElement.scrollTop = container.parentElement.scrollHeight;
+}
+
+function updateScores(scores) {
+  for (const [key, val] of Object.entries(scores)) {
+    const num = key.replace('c', '');
+    const bar = document.getElementById(`barC${num}`);
+    const valEl = document.getElementById(`valC${num}`);
+    if (bar) { bar.style.width = (val / 5 * 100) + '%'; }
+    if (valEl) { valEl.textContent = val; }
+  }
+}
+
+async function requestHint() {
+  if (isLoading) return;
+  addAriaTip("💡 Think about what format you want the output in. Being specific about structure (bullet points? table? prose?) helps Claude deliver exactly what you need.", "micro-lesson", promptCount);
+}
+
+// ========================
+// TIMER
+// ========================
+function startTimer(from) {
+  startTime = from ? new Date(from) : new Date();
+  timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - startTime.getTime()) / 1000);
+    const min = Math.floor(elapsed / 60).toString().padStart(2, '0');
+    const sec = (elapsed % 60).toString().padStart(2, '0');
+    document.getElementById('topTimer').textContent = `${min}:${sec}`;
+  }, 1000);
+}
+
+// ========================
+// COMPLETE / ABANDON
+// ========================
+async function completeSim() {
+  if (promptCount < 1) { showToast('Send at least one prompt before submitting.', 'error'); return; }
+  if (!confirm(lang === 'fr' ? 'Soumettre votre livrable et terminer la simulation ?' : 'Submit your deliverable and end the simulation?')) return;
+
+  document.getElementById('btnSubmit').disabled = true;
+  document.getElementById('btnSubmit').textContent = 'Generating debrief...';
+  clearInterval(timerInterval);
+
+  try {
+    const res = await fetch(`${API}/api/simulation/complete`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ sessionId })
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.error, 'error'); return; }
+
+    // Store debrief data for the debrief page
+    localStorage.setItem('claudesim_debrief', JSON.stringify(data.debrief));
+    window.location.href = `/debrief?session=${sessionId}`;
+  } catch(e) {
+    showToast('Failed to complete simulation', 'error');
+    document.getElementById('btnSubmit').disabled = false;
+    document.getElementById('btnSubmit').textContent = '✓ Submit Deliverable';
+  }
+}
+
+function abandonSim() {
+  if (!confirm(lang === 'fr' ? 'Abandonner cette simulation ?' : 'Abandon this simulation?')) return;
+  clearInterval(timerInterval);
+  window.location.href = '/dashboard';
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+init();
+</script>
+</body>
+</html>

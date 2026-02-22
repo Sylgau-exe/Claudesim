@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/dashboard", "destination": "/public/dashboard.html" },
+    { "source": "/simulation", "destination": "/public/simulation.html" },
+    { "source": "/scenarios", "destination": "/public/dashboard.html" },
+    { "source": "/admin", "destination": "/public/admin.html" },
+    { "source": "/debrief", "destination": "/public/debrief.html" },
+    { "source": "/((?!api/).*)", "destination": "/public/$1" }
+  ]
+}

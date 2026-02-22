@@ -1,0 +1,12 @@
+{
+  "name": "claudesim",
+  "version": "1.0.0",
+  "description": "ClaudeSim - AI Literacy Simulation Platform by Panda Projet",
+  "type": "module",
+  "dependencies": {
+    "@vercel/postgres": "^0.10.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "resend": "^4.1.2"
+  }
+}

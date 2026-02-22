@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClaudeSim — Debrief Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg-primary:#0a0f1e;--bg-secondary:#0f172a;--bg-card:#151d30;--text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;--accent:#2563eb;--accent-light:#3b82f6;--accent-glow:rgba(37,99,235,0.3);--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--border:rgba(255,255,255,0.08);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh;}
+.container{max-width:900px;margin:0 auto;padding:40px 24px;}
+a{color:var(--accent-light);text-decoration:none;}
+nav{background:var(--bg-secondary);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-size:20px;font-weight:800;} .nav-logo span{color:var(--accent-light);}
+.btn{padding:10px 20px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;border:none;font-family:inherit;transition:all 0.2s;}
+.btn-primary{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;}
+
+/* DEBRIEF HEADER */
+.debrief-header{text-align:center;padding:40px 0 32px;}
+.debrief-header h1{font-size:32px;font-weight:800;margin-bottom:8px;}
+.debrief-header p{font-size:16px;color:var(--text-secondary);}
+
+/* SCORE RING */
+.score-ring{width:160px;height:160px;margin:32px auto;position:relative;}
+.score-ring svg{width:100%;height:100%;transform:rotate(-90deg);}
+.score-ring circle{fill:none;stroke-width:12;stroke-linecap:round;}
+.score-ring .bg{stroke:rgba(255,255,255,0.06);}
+.score-ring .fill{stroke:var(--accent);transition:stroke-dashoffset 1.5s ease;}
+.score-value{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-value .num{font-size:48px;font-weight:800;color:var(--accent-light);}
+.score-value .label{font-size:13px;color:var(--text-muted);}
+
+/* META */
+.meta-row{display:flex;justify-content:center;gap:32px;margin-bottom:40px;}
+.meta-item{text-align:center;}
+.meta-item .val{font-size:20px;font-weight:700;}
+.meta-item .label{font-size:12px;color:var(--text-muted);margin-top:2px;}
+
+/* COMPETENCIES */
+.comp-section{margin-bottom:40px;}
+.comp-section h2{font-size:20px;font-weight:700;margin-bottom:16px;}
+.comp-bars{display:grid;grid-template-columns:1fr;gap:12px;}
+.comp-row{display:flex;align-items:center;gap:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.comp-row .code{font-size:14px;font-weight:800;color:var(--accent-light);width:28px;}
+.comp-row .name{font-size:13px;color:var(--text-secondary);width:140px;flex-shrink:0;}
+.comp-row .bar-bg{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;}
+.comp-row .bar-fill{height:100%;background:var(--accent);border-radius:4px;transition:width 1s ease;}
+.comp-row .score{font-size:14px;font-weight:700;width:32px;text-align:right;}
+
+/* STRENGTHS / IMPROVEMENTS */
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:40px;}
+.analysis-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:24px;}
+.analysis-card h3{font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.analysis-card ul{list-style:none;}
+.analysis-card li{padding:8px 0;font-size:14px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
+.analysis-card li .icon{flex-shrink:0;margin-top:2px;}
+
+/* TECHNIQUES */
+.techniques{margin-bottom:40px;}
+.techniques h2{font-size:20px;font-weight:700;margin-bottom:16px;}
+.tech-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.tech-tag{padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;}
+.tech-tag.used{background:rgba(16,185,129,0.15);color:#34d399;}
+.tech-tag.missed{background:rgba(239,68,68,0.15);color:#f87171;}
+
+/* RECOMMENDATION */
+.reco-card{background:var(--bg-card);border:1px solid var(--border-accent);border-radius:12px;padding:24px;margin-bottom:40px;border-left:4px solid var(--accent);}
+.reco-card h3{font-size:16px;font-weight:700;margin-bottom:8px;}
+.reco-card p{font-size:14px;color:var(--text-secondary);line-height:1.6;}
+
+.cta-row{text-align:center;padding:20px 0 40px;}
+.cta-row .btn{margin:0 8px;}
+@media(max-width:768px){.analysis-grid{grid-template-columns:1fr;}.meta-row{flex-direction:column;gap:16px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Claude<span>Sim</span></a>
+  <a href="/dashboard">← Back to Dashboard</a>
+</nav>
+
+<div class="container">
+  <div class="debrief-header">
+    <h1>🎯 Debrief Report</h1>
+    <p id="debriefScenario">Simulation Complete</p>
+  </div>
+
+  <!-- SCORE RING -->
+  <div class="score-ring">
+    <svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fill" id="scoreCircle" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg>
+    <div class="score-value"><div class="num" id="scoreNum">-</div><div class="label">Global Score</div></div>
+  </div>
+
+  <div class="meta-row">
+    <div class="meta-item"><div class="val" id="metaPrompts">-</div><div class="label">Prompts Used</div></div>
+    <div class="meta-item"><div class="val" id="metaDuration">-</div><div class="label">Minutes</div></div>
+  </div>
+
+  <!-- COMPETENCIES -->
+  <div class="comp-section">
+    <h2>Competency Scores</h2>
+    <div class="comp-bars" id="compBars"></div>
+  </div>
+
+  <!-- STRENGTHS + IMPROVEMENTS -->
+  <div class="analysis-grid">
+    <div class="analysis-card">
+      <h3>💪 Strengths</h3>
+      <ul id="strengthsList"></ul>
+    </div>
+    <div class="analysis-card">
+      <h3>🎯 Areas for Improvement</h3>
+      <ul id="improvementsList"></ul>
+    </div>
+  </div>
+
+  <!-- TECHNIQUES -->
+  <div class="techniques">
+    <h2>Techniques Analysis</h2>
+    <div class="tech-grid" id="techGrid"></div>
+  </div>
+
+  <!-- RECOMMENDATION -->
+  <div class="reco-card">
+    <h3>📋 Next Steps</h3>
+    <p id="recoText">Loading...</p>
+  </div>
+
+  <div class="cta-row">
+    <a href="/dashboard" class="btn btn-primary">Back to Dashboard</a>
+    <button class="btn" style="background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border);" onclick="window.print()">🖨 Print Report</button>
+  </div>
+</div>
+
+<script>
+const lang = localStorage.getItem('claudesim_lang') || 'en';
+const COMP_NAMES = { c1: 'Clarity', c2: 'Advanced Techniques', c3: 'Strategic Iteration', c4: 'Critical Thinking', c5: 'Efficiency', c6: 'Ethics & Limits' };
+const COMP_NAMES_FR = { c1: 'Clarté', c2: 'Techniques avancées', c3: 'Itération stratégique', c4: 'Pensée critique', c5: 'Efficacité', c6: 'Éthique & Limites' };
+
+function init() {
+  const stored = localStorage.getItem('claudesim_debrief');
+  if (stored) {
+    try {
+      renderDebrief(JSON.parse(stored));
+    } catch(e) { console.error('Parse error', e); }
+  } else {
+    document.getElementById('scoreNum').textContent = '?';
+    document.getElementById('recoText').textContent = 'No debrief data found. Complete a simulation first.';
+  }
+}
+
+function renderDebrief(d) {
+  // Score ring
+  const score = d.scoreGlobal || 0;
+  document.getElementById('scoreNum').textContent = score;
+  const circle = document.getElementById('scoreCircle');
+  const offset = 326.7 - (326.7 * score / 100);
+  setTimeout(() => { circle.style.strokeDashoffset = offset; }, 200);
+
+  // Meta
+  document.getElementById('metaPrompts').textContent = d.promptCount || '-';
+  document.getElementById('metaDuration').textContent = d.duration || '-';
+
+  // Competencies
+  const names = lang === 'fr' ? COMP_NAMES_FR : COMP_NAMES;
+  const compBars = document.getElementById('compBars');
+  compBars.innerHTML = Object.entries(d.scores || {}).map(([key, val]) => `
+    <div class="comp-row">
+      <span class="code">${key.toUpperCase()}</span>
+      <span class="name">${names[key] || key}</span>
+      <div class="bar-bg"><div class="bar-fill" style="width:${val/5*100}%"></div></div>
+      <span class="score">${val}/5</span>
+    </div>
+  `).join('');
+
+  // Strengths
+  document.getElementById('strengthsList').innerHTML = (d.strengths || []).map(s => `<li><span class="icon">✅</span>${s}</li>`).join('');
+  document.getElementById('improvementsList').innerHTML = (d.improvements || []).map(s => `<li><span class="icon">🔧</span>${s}</li>`).join('');
+
+  // Techniques
+  const techGrid = document.getElementById('techGrid');
+  techGrid.innerHTML = 
+    (d.techniquesUsed || []).map(t => `<span class="tech-tag used">✓ ${t}</span>`).join('') +
+    (d.techniquesMissed || []).map(t => `<span class="tech-tag missed">✗ ${t}</span>`).join('');
+
+  // Recommendation
+  document.getElementById('recoText').textContent = d.recommendation || '';
+}
+
+init();
+</script>
+</body>
+</html>
