@@ -139,6 +139,7 @@ Generate the debrief report now.`;
     return res.json({
       success: true,
       debrief: {
+        scenarioId: session.scenario_id,
         scoreGlobal: debrief.score_global,
         scores: debrief.scores,
         strengths: debrief.strengths,
