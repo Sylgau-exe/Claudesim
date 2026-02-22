@@ -180,7 +180,7 @@ async function loadDashboard() {
     document.getElementById('statCompleted').textContent = data.stats.completedSessions;
     document.getElementById('statAvgScore').textContent = data.stats.avgScore || '-';
     const remaining = (userData.simulationsLimit || 1) - (userData.simulationsUsed || 0);
-    if (userData.plan === 'free') {
+    if (userData.plan === 'free' && !userData.isAdmin) {
       document.getElementById('statRemaining').textContent = Math.max(0, remaining);
     } else {
       document.getElementById('statRemaining').textContent = '∞';
@@ -218,9 +218,9 @@ async function loadScenarios() {
     const res = await fetch(`${API}/api/scenarios`);
     const data = await res.json();
     const list = document.getElementById('scenarioList');
-    const isFreeUsed = userData.plan === 'free' && (parseInt(userData.simulationsUsed) || 0) >= 1;
+    const isFreeUsed = userData.plan === 'free' && !userData.isAdmin && (parseInt(userData.simulationsUsed) || 0) >= 1;
     list.innerHTML = data.scenarios.map(s => {
-      const locked = userData.plan === 'free' && (!s.is_free || isFreeUsed);
+      const locked = !userData.isAdmin && userData.plan === 'free' && (!s.is_free || isFreeUsed);
       return `
       <div class="sc-card${locked ? ' locked' : ''}" onclick="startScenario(${s.id}, ${s.is_free})" style="${locked ? 'opacity:0.7;' : ''}">
         <div class="sc-meta">
@@ -240,7 +240,7 @@ async function loadScenarios() {
 }
 
 function startScenario(id, isFree) {
-  if (userData.plan === 'free') {
+  if (userData.plan === 'free' && !userData.isAdmin) {
     const used = parseInt(userData.simulationsUsed) || 0;
     if (!isFree || used >= 1) {
       showUpgradeModal();

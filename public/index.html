@@ -180,7 +180,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba
 .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 960px; margin: 48px auto 0; }
 .pricing-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 36px 28px; text-align: left; position: relative; transition: all 0.3s; }
 .pricing-card.featured { border-color: var(--accent); box-shadow: 0 0 40px var(--accent-glow); }
-.pricing-card.featured::before { content: 'MOST POPULAR'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent-gradient); padding: 4px 16px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+.pricing-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent-gradient); padding: 4px 16px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1px; color: white; white-space: nowrap; }
 .pricing-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
 .pricing-card .price { font-size: 42px; font-weight: 800; margin: 16px 0; }
 .pricing-card .price span { font-size: 16px; font-weight: 400; color: var(--text-secondary); }
@@ -423,6 +423,7 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
         <button class="btn btn-secondary" onclick="showModal('register')" data-i18n="plan_free_cta">Get Started Free</button>
       </div>
       <div class="pricing-card featured">
+        <span class="pricing-badge" data-i18n="plan_popular">MOST POPULAR</span>
         <h3 data-i18n="plan_pro_name">Pro Monthly</h3>
         <div class="price">$19 <span data-i18n="plan_pro_period">/month</span></div>
         <div class="price-note" data-i18n="plan_pro_note">Unlimited simulations</div>
@@ -616,6 +617,7 @@ const translations = {
     sc_label: 'Catalogue de scénarios', sc_title: 'Scénarios <span class="gradient-text">professionnels réels</span>',
     sc_subtitle: 'Débutant à Avancé. Communication, Analyse, Stratégie, Recherche, Marketing, Juridique.',
     pr_label: 'Tarifs', pr_title: 'Commencez gratuit, <span class="gradient-text">passez Pro</span>',
+    plan_popular: 'LE PLUS POPULAIRE',
     pr_subtitle: 'Essayez votre première simulation gratuitement. Passez à Pro pour un accès illimité.',
     plan_free_name: 'Découverte', plan_free_note: 'Essayez avant d\'acheter',
     plan_free_f1: '1 simulation complète (S01)', plan_free_f2: 'Coaching ARIA inclus', plan_free_f3: 'Rapport de débrief', plan_free_f4: 'Score de prompts', plan_free_cta: 'Commencer gratuitement',
@@ -772,11 +774,12 @@ async function handleCheckout(plan) {
     const { error } = await stripe.redirectToCheckout({
       lineItems: [{ price: PRICE_IDS[plan], quantity: 1 }],
       mode: plan === 'pro_monthly' ? 'subscription' : 'payment',
+      customerEmail: currentUser.email,
       successUrl: window.location.origin + '/dashboard?payment=success',
       cancelUrl: window.location.origin + '#pricing',
     });
     if (error) showToast(error.message, 'error');
-  } catch(err) { showToast('Payment setup failed', 'error'); }
+  } catch(err) { showToast('Payment setup failed: ' + err.message, 'error'); }
 }
 
 // ========================

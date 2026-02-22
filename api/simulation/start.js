@@ -21,8 +21,8 @@ export default async function handler(req, res) {
     const scenario = await ScenarioDB.findById(scenarioId);
     if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
 
-    // Check plan limits — free users get 1 simulation total
-    if (user.plan === 'free') {
+    // Check plan limits — free users get 1 simulation total (admins bypass)
+    if (user.plan === 'free' && !user.is_admin) {
       if (!scenario.is_free) {
         return res.status(403).json({ error: 'upgrade_required', message: 'This scenario requires a Pro plan.' });
       }
