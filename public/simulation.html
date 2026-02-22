@@ -14,78 +14,117 @@
   --border: rgba(255,255,255,0.08); --border-accent: rgba(37,99,235,0.3);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); height: 100vh; overflow: hidden; }
+body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
 
-/* TOP BAR */
-.topbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); height: 52px; }
+/* ==============================
+   PHASE 1: FULL-SCREEN BRIEF
+   ============================== */
+.brief-screen { min-height: 100vh; display: flex; flex-direction: column; }
+.brief-screen.hidden { display: none; }
+
+.brief-nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+.brief-nav-logo { font-size: 20px; font-weight: 800; }
+.brief-nav-logo span { color: var(--accent-light); }
+.brief-nav-back { color: var(--text-secondary); font-size: 14px; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+.brief-nav-back:hover { color: var(--text-primary); }
+
+.brief-hero { text-align: center; padding: 60px 32px 40px; position: relative; }
+.brief-hero::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(ellipse, rgba(37,99,235,0.1) 0%, transparent 70%); pointer-events: none; }
+.brief-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(37,99,235,0.12); border: 1px solid var(--border-accent); border-radius: 999px; font-size: 13px; color: var(--accent-light); font-weight: 600; margin-bottom: 20px; }
+.brief-hero h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; line-height: 1.2; margin-bottom: 12px; max-width: 700px; margin-left: auto; margin-right: auto; }
+.brief-hero-sub { font-size: 17px; color: var(--text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+.brief-meta-bar { display: flex; justify-content: center; gap: 32px; padding: 24px 32px; flex-wrap: wrap; }
+.brief-meta { text-align: center; }
+.brief-meta-val { font-size: 22px; font-weight: 800; color: var(--accent-light); }
+.brief-meta-label { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+.brief-content { max-width: 900px; margin: 0 auto; padding: 20px 32px 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.brief-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+.brief-card.full { grid-column: 1 / -1; }
+.brief-card-icon { font-size: 28px; margin-bottom: 12px; }
+.brief-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 14px; color: var(--text-primary); }
+.brief-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
+
+.brief-criteria-list { list-style: none; padding: 0; }
+.brief-criteria-list li { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 15px; color: var(--text-secondary); }
+.brief-criteria-list li:last-child { border-bottom: none; }
+.brief-criteria-weight { font-weight: 700; color: var(--accent-light); font-size: 14px; }
+
+.brief-comp-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.brief-comp-tag { padding: 8px 16px; background: rgba(37,99,235,0.1); border: 1px solid var(--border-accent); border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--accent-light); }
+
+.brief-start-area { text-align: center; padding: 40px 32px 60px; }
+.brief-start-btn { display: inline-flex; align-items: center; gap: 10px; padding: 16px 48px; background: linear-gradient(135deg, #1e3a5f, #2563eb); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.3s; box-shadow: 0 6px 30px var(--accent-glow); }
+.brief-start-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 40px var(--accent-glow); }
+.brief-start-hint { font-size: 14px; color: var(--text-muted); margin-top: 12px; }
+
+/* ==============================
+   PHASE 2: SIMULATION INTERFACE
+   ============================== */
+.sim-screen { display: none; height: 100vh; flex-direction: column; overflow: hidden; }
+.sim-screen.active { display: flex; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); height: 52px; flex-shrink: 0; }
 .topbar-left { display: flex; align-items: center; gap: 16px; }
 .topbar-logo { font-size: 18px; font-weight: 800; }
 .topbar-logo span { color: var(--accent-light); }
-.topbar-scenario { font-size: 13px; color: var(--text-secondary); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-scenario { font-size: 14px; color: var(--text-secondary); max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .topbar-center { display: flex; align-items: center; gap: 16px; }
 .topbar-timer { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600; color: var(--accent-light); background: rgba(37,99,235,0.1); padding: 4px 12px; border-radius: 6px; }
-.topbar-prompts { font-size: 12px; color: var(--text-muted); }
+.topbar-prompts { font-size: 13px; color: var(--text-secondary); }
 .topbar-right { display: flex; align-items: center; gap: 12px; }
 .btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; }
+.btn-brief { background: rgba(37,99,235,0.1); color: var(--accent-light); border: 1px solid var(--border-accent); }
+.btn-brief:hover { background: rgba(37,99,235,0.2); }
 .btn-submit { background: var(--success); color: white; }
 .btn-submit:hover { background: #059669; }
 .btn-abandon { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
 .btn-abandon:hover { border-color: var(--danger); color: var(--danger); }
 
-/* MAIN LAYOUT — THREE PANELS */
-.sim-layout { display: grid; grid-template-columns: 280px 1fr 280px; height: calc(100vh - 52px); }
+.sim-layout { display: grid; grid-template-columns: 1fr 300px; flex: 1; overflow: hidden; }
 
-/* LEFT PANEL — BRIEF */
-.panel-brief { background: var(--bg-secondary); border-right: 1px solid var(--border); overflow-y: auto; padding: 20px; }
-.panel-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 16px; }
-.brief-scenario { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
-.brief-section { margin-bottom: 20px; }
-.brief-section h4 { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
-.brief-criteria { font-size: 12px; color: var(--text-secondary); }
-.brief-criteria li { padding: 4px 0; list-style: none; display: flex; align-items: center; gap: 6px; }
-.brief-criteria li::before { content: '•'; color: var(--accent-light); }
-
-/* COMPETENCY BARS */
-.comp-scores { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
-.comp-row { display: flex; align-items: center; gap: 8px; }
-.comp-label { font-size: 11px; font-weight: 700; color: var(--accent-light); width: 24px; flex-shrink: 0; }
-.comp-bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
-.comp-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s ease; }
-.comp-val { font-size: 11px; color: var(--text-muted); width: 16px; text-align: right; }
-
-/* CENTER PANEL — CLAUDE CHAT */
-.panel-chat { display: flex; flex-direction: column; background: var(--bg-primary); }
-.chat-header { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.panel-chat { display: flex; flex-direction: column; background: var(--bg-primary); overflow: hidden; }
+.chat-header { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .chat-header-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; }
-.chat-header span { font-size: 13px; color: var(--text-secondary); }
+.chat-header span { font-size: 14px; color: var(--text-secondary); }
 .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-.msg { max-width: 85%; animation: fadeIn 0.3s ease; }
+.msg { max-width: 80%; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .msg-user { align-self: flex-end; }
 .msg-assistant { align-self: flex-start; }
-.msg-bubble { padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; }
+.msg-bubble { padding: 14px 18px; border-radius: 12px; font-size: 15px; line-height: 1.7; }
 .msg-user .msg-bubble { background: var(--accent); color: white; border-bottom-right-radius: 4px; }
 .msg-assistant .msg-bubble { background: var(--bg-card); border: 1px solid var(--border); border-bottom-left-radius: 4px; color: var(--text-primary); }
 .msg-assistant .msg-bubble pre { background: var(--bg-input); padding: 10px; border-radius: 6px; overflow-x: auto; font-size: 13px; margin: 8px 0; font-family: 'JetBrains Mono', monospace; }
-.msg-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.msg-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* CHAT INPUT */
-.chat-input-area { padding: 16px 20px; border-top: 1px solid var(--border); background: var(--bg-secondary); }
+.chat-input-area { padding: 16px 20px; border-top: 1px solid var(--border); background: var(--bg-secondary); flex-shrink: 0; }
 .chat-input-wrap { display: flex; gap: 10px; align-items: flex-end; }
-.chat-input { flex: 1; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text-primary); font-size: 14px; font-family: 'JetBrains Mono', monospace; resize: none; outline: none; min-height: 44px; max-height: 120px; transition: border-color 0.2s; }
+.chat-input { flex: 1; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text-primary); font-size: 15px; font-family: 'JetBrains Mono', monospace; resize: none; outline: none; min-height: 44px; max-height: 120px; transition: border-color 0.2s; }
 .chat-input:focus { border-color: var(--accent); }
 .chat-input::placeholder { color: var(--text-muted); }
 .chat-send { width: 44px; height: 44px; background: var(--accent); border: none; border-radius: 10px; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
 .chat-send:hover { background: var(--accent-light); }
 .chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* RIGHT PANEL — ARIA COACH */
-.panel-aria { background: var(--bg-secondary); border-left: 1px solid var(--border); overflow-y: auto; padding: 20px; }
-.aria-avatar { width: 48px; height: 48px; background: linear-gradient(135deg, #1e3a5f, #2563eb); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 12px; }
-.aria-name { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
-.aria-role { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+.panel-aria { background: var(--bg-secondary); border-left: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; }
+.aria-header { padding: 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.aria-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.aria-avatar { width: 44px; height: 44px; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+.aria-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.aria-name { font-size: 16px; font-weight: 700; }
+.aria-role { font-size: 12px; color: var(--text-muted); }
 
-.aria-tips { display: flex; flex-direction: column; gap: 12px; }
+.comp-scores { display: flex; flex-direction: column; gap: 6px; }
+.comp-row { display: flex; align-items: center; gap: 8px; }
+.comp-label { font-size: 12px; font-weight: 700; color: var(--accent-light); width: 26px; flex-shrink: 0; }
+.comp-bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.comp-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s ease; }
+.comp-val { font-size: 12px; color: var(--text-muted); width: 18px; text-align: right; }
+
+.aria-tips-area { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 .aria-tip { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; animation: fadeIn 0.4s ease; }
 .aria-tip-type { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; padding: 2px 8px; border-radius: 4px; display: inline-block; }
 .aria-tip-type.nudge { background: rgba(245,158,11,0.15); color: #fbbf24; }
@@ -93,117 +132,156 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
 .aria-tip-type.alert { background: rgba(239,68,68,0.15); color: #f87171; }
 .aria-tip-type.encouragement { background: rgba(16,185,129,0.15); color: #34d399; }
 .aria-tip-type.redirect { background: rgba(168,85,247,0.15); color: #c084fc; }
-.aria-tip-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
-.aria-tip-num { font-size: 10px; color: var(--text-muted); margin-top: 6px; }
+.aria-tip-text { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+.aria-tip-num { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 
 .aria-waiting { text-align: center; padding: 32px 0; }
 .aria-waiting-icon { font-size: 32px; margin-bottom: 8px; }
-.aria-waiting p { font-size: 13px; color: var(--text-muted); }
+.aria-waiting p { font-size: 14px; color: var(--text-muted); }
 
-/* HINT BUTTON */
-.aria-hint-btn { width: 100%; margin-top: 16px; padding: 10px; background: rgba(37,99,235,0.1); border: 1px solid var(--border-accent); border-radius: 8px; color: var(--accent-light); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.aria-footer { padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0; }
+.aria-hint-btn { width: 100%; padding: 10px; background: rgba(37,99,235,0.1); border: 1px solid var(--border-accent); border-radius: 8px; color: var(--accent-light); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
 .aria-hint-btn:hover { background: rgba(37,99,235,0.2); }
 
-/* LOADING */
+/* BRIEF DRAWER */
+.brief-drawer { position: fixed; top: 0; left: 0; width: 420px; height: 100vh; background: var(--bg-secondary); border-right: 1px solid var(--border); z-index: 200; transform: translateX(-100%); transition: transform 0.3s ease; overflow-y: auto; padding: 24px; }
+.brief-drawer.open { transform: translateX(0); }
+.brief-drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 199; display: none; }
+.brief-drawer-overlay.open { display: block; }
+.brief-drawer-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
+.brief-drawer h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+.brief-drawer p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; }
+.brief-drawer h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--text-primary); }
+.brief-drawer ul { list-style: none; padding: 0; }
+.brief-drawer li { padding: 8px 0; font-size: 14px; color: var(--text-secondary); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+.brief-drawer li:last-child { border-bottom: none; }
+
 .typing-indicator { display: flex; gap: 4px; padding: 8px 0; }
 .typing-dot { width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; animation: bounce 1.4s infinite; }
 .typing-dot:nth-child(2) { animation-delay: 0.2s; }
 .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
 
-/* TOAST */
-.toast { position: fixed; top: 60px; right: 20px; padding: 12px 20px; border-radius: 8px; font-size: 14px; z-index: 100; transform: translateX(150%); transition: transform 0.3s; }
+.toast { position: fixed; top: 60px; right: 20px; padding: 12px 20px; border-radius: 8px; font-size: 14px; z-index: 300; transform: translateX(150%); transition: transform 0.3s; }
 .toast.show { transform: translateX(0); }
 .toast.success { background: #065f46; color: #a7f3d0; border: 1px solid #10b981; }
 .toast.error { background: #7f1d1d; color: #fecaca; border: 1px solid #ef4444; }
 
-/* RESPONSIVE */
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .sim-layout { grid-template-columns: 1fr; }
-  .panel-brief, .panel-aria { display: none; }
+  .panel-aria { display: none; }
+  .brief-content { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-  <div class="topbar-left">
-    <div class="topbar-logo">Claude<span>Sim</span></div>
-    <div class="topbar-scenario" id="topScenario">Loading scenario...</div>
+<!-- PHASE 1: FULL-SCREEN BRIEF -->
+<div class="brief-screen" id="briefScreen">
+  <div class="brief-nav">
+    <div class="brief-nav-logo">Claude<span>Sim</span></div>
+    <a href="/dashboard" class="brief-nav-back">← Back to Dashboard</a>
   </div>
-  <div class="topbar-center">
-    <div class="topbar-timer" id="topTimer">00:00</div>
-    <div class="topbar-prompts" id="topPrompts">Prompts: 0</div>
+  <div class="brief-hero">
+    <div class="brief-badge" id="briefBadge">
+      <span id="briefDomain">Communication</span> · <span id="briefLevel">Beginner</span>
+    </div>
+    <h1 id="briefTitle">Loading scenario...</h1>
+    <p class="brief-hero-sub" id="briefDescription">Loading...</p>
   </div>
-  <div class="topbar-right">
-    <button class="btn btn-abandon" onclick="abandonSim()">✕ Abandon</button>
-    <button class="btn btn-submit" onclick="completeSim()" id="btnSubmit">✓ Submit Deliverable</button>
+  <div class="brief-meta-bar">
+    <div class="brief-meta"><div class="brief-meta-val" id="briefDuration">15</div><div class="brief-meta-label">Minutes</div></div>
+    <div class="brief-meta"><div class="brief-meta-val" id="briefCompCount">2</div><div class="brief-meta-label">Competencies</div></div>
+    <div class="brief-meta"><div class="brief-meta-val" id="briefCritCount">5</div><div class="brief-meta-label">Criteria</div></div>
+  </div>
+  <div class="brief-content">
+    <div class="brief-card full">
+      <div class="brief-card-icon">🎯</div>
+      <h3 id="missionLabel">Your Mission</h3>
+      <p id="briefMission">Loading...</p>
+    </div>
+    <div class="brief-card">
+      <div class="brief-card-icon">📋</div>
+      <h3 id="criteriaLabel">Evaluation Criteria</h3>
+      <ul class="brief-criteria-list" id="briefCriteria"></ul>
+    </div>
+    <div class="brief-card">
+      <div class="brief-card-icon"><img src="/aria.png" alt="ARIA" style="width:36px;height:36px;border-radius:8px;"></div>
+      <h3 id="compTargetLabel">Competencies Targeted</h3>
+      <div class="brief-comp-grid" id="briefCompetencies"></div>
+      <p style="font-size:14px;color:var(--text-muted);margin-top:14px;" id="compExplain">ARIA will coach you on these competencies in real-time as you work.</p>
+    </div>
+  </div>
+  <div class="brief-start-area">
+    <button class="brief-start-btn" onclick="launchSimulation()" id="briefStartBtn">Begin Simulation →</button>
+    <div class="brief-start-hint" id="briefHint">You'll interact with Claude in a split-screen interface with ARIA coaching you in real-time.</div>
   </div>
 </div>
 
-<!-- THREE-PANEL LAYOUT -->
-<div class="sim-layout">
-
-  <!-- LEFT: BRIEF -->
-  <div class="panel-brief">
-    <div class="panel-title" id="briefLabel">📋 Scenario Brief</div>
-    <div class="brief-scenario" id="briefText">Loading...</div>
-    
-    <div class="brief-section">
-      <h4 id="critLabel">Evaluation Criteria</h4>
-      <ul class="brief-criteria" id="briefCriteria"></ul>
+<!-- PHASE 2: SIMULATION -->
+<div class="sim-screen" id="simScreen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">Claude<span>Sim</span></div>
+      <div class="topbar-scenario" id="topScenario">Scenario</div>
     </div>
-
-    <div class="brief-section">
-      <h4 id="compLabel">Your Competencies</h4>
-      <div class="comp-scores" id="compScores">
-        <div class="comp-row"><span class="comp-label">C1</span><div class="comp-bar-bg"><div class="comp-bar" id="barC1" style="width:0%"></div></div><span class="comp-val" id="valC1">-</span></div>
-        <div class="comp-row"><span class="comp-label">C2</span><div class="comp-bar-bg"><div class="comp-bar" id="barC2" style="width:0%"></div></div><span class="comp-val" id="valC2">-</span></div>
-        <div class="comp-row"><span class="comp-label">C3</span><div class="comp-bar-bg"><div class="comp-bar" id="barC3" style="width:0%"></div></div><span class="comp-val" id="valC3">-</span></div>
-        <div class="comp-row"><span class="comp-label">C4</span><div class="comp-bar-bg"><div class="comp-bar" id="barC4" style="width:0%"></div></div><span class="comp-val" id="valC4">-</span></div>
-        <div class="comp-row"><span class="comp-label">C5</span><div class="comp-bar-bg"><div class="comp-bar" id="barC5" style="width:0%"></div></div><span class="comp-val" id="valC5">-</span></div>
-        <div class="comp-row"><span class="comp-label">C6</span><div class="comp-bar-bg"><div class="comp-bar" id="barC6" style="width:0%"></div></div><span class="comp-val" id="valC6">-</span></div>
-      </div>
+    <div class="topbar-center">
+      <button class="btn btn-brief" onclick="toggleBriefDrawer()">📋 View Brief</button>
+      <div class="topbar-timer" id="topTimer">00:00</div>
+      <div class="topbar-prompts" id="topPrompts">Prompts: 0</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-abandon" onclick="abandonSim()">✕ Abandon</button>
+      <button class="btn btn-submit" onclick="completeSim()" id="btnSubmit">✓ Submit Deliverable</button>
     </div>
   </div>
-
-  <!-- CENTER: CLAUDE CHAT -->
-  <div class="panel-chat">
-    <div class="chat-header">
-      <div class="chat-header-dot"></div>
-      <span>Claude — Ready</span>
-    </div>
-    <div class="chat-messages" id="chatMessages">
-      <div class="msg msg-assistant">
-        <div class="msg-label">Claude</div>
-        <div class="msg-bubble" id="welcomeMsg">Welcome! I'm ready to help you with this scenario. Write your first prompt below to get started.</div>
+  <div class="sim-layout">
+    <div class="panel-chat">
+      <div class="chat-header"><div class="chat-header-dot"></div><span>Claude — Ready</span></div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg msg-assistant">
+          <div class="msg-label">Claude</div>
+          <div class="msg-bubble" id="welcomeMsg">Welcome! I'm ready to help you with this scenario. Write your first prompt below to get started.</div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <div class="chat-input-wrap">
+          <textarea class="chat-input" id="chatInput" placeholder="Write your prompt to Claude..." rows="1" onkeydown="handleKeydown(event)"></textarea>
+          <button class="chat-send" id="chatSend" onclick="sendMessage()">→</button>
+        </div>
       </div>
     </div>
-    <div class="chat-input-area">
-      <div class="chat-input-wrap">
-        <textarea class="chat-input" id="chatInput" placeholder="Write your prompt to Claude..." rows="1" onkeydown="handleKeydown(event)"></textarea>
-        <button class="chat-send" id="chatSend" onclick="sendMessage()">→</button>
+    <div class="panel-aria">
+      <div class="aria-header">
+        <div class="aria-top">
+          <div class="aria-avatar"><img src="/aria.png" alt="ARIA"></div>
+          <div><div class="aria-name">ARIA</div><div class="aria-role">AI Readiness & Interaction Advisor</div></div>
+        </div>
+        <div class="comp-scores">
+          <div class="comp-row"><span class="comp-label">C1</span><div class="comp-bar-bg"><div class="comp-bar" id="barC1" style="width:0%"></div></div><span class="comp-val" id="valC1">-</span></div>
+          <div class="comp-row"><span class="comp-label">C2</span><div class="comp-bar-bg"><div class="comp-bar" id="barC2" style="width:0%"></div></div><span class="comp-val" id="valC2">-</span></div>
+          <div class="comp-row"><span class="comp-label">C3</span><div class="comp-bar-bg"><div class="comp-bar" id="barC3" style="width:0%"></div></div><span class="comp-val" id="valC3">-</span></div>
+          <div class="comp-row"><span class="comp-label">C4</span><div class="comp-bar-bg"><div class="comp-bar" id="barC4" style="width:0%"></div></div><span class="comp-val" id="valC4">-</span></div>
+          <div class="comp-row"><span class="comp-label">C5</span><div class="comp-bar-bg"><div class="comp-bar" id="barC5" style="width:0%"></div></div><span class="comp-val" id="valC5">-</span></div>
+          <div class="comp-row"><span class="comp-label">C6</span><div class="comp-bar-bg"><div class="comp-bar" id="barC6" style="width:0%"></div></div><span class="comp-val" id="valC6">-</span></div>
+        </div>
       </div>
+      <div class="aria-tips-area" id="ariaTips">
+        <div class="aria-waiting"><div class="aria-waiting-icon">👀</div><p>I'm watching. Send your first prompt and I'll analyze your technique.</p></div>
+      </div>
+      <div class="aria-footer"><button class="aria-hint-btn" onclick="requestHint()">💡 Ask ARIA for a Hint</button></div>
     </div>
   </div>
+</div>
 
-  <!-- RIGHT: ARIA COACH -->
-  <div class="panel-aria">
-    <div class="aria-avatar">🤖</div>
-    <div class="aria-name">ARIA</div>
-    <div class="aria-role">AI Readiness & Interaction Advisor</div>
-    
-    <div class="aria-tips" id="ariaTips">
-      <div class="aria-waiting">
-        <div class="aria-waiting-icon">👀</div>
-        <p id="ariaWaiting">I'm watching. Send your first prompt and I'll analyze your technique.</p>
-      </div>
-    </div>
-
-    <button class="aria-hint-btn" onclick="requestHint()" id="hintBtn">💡 Ask ARIA for a Hint</button>
-  </div>
-
+<!-- BRIEF DRAWER -->
+<div class="brief-drawer-overlay" id="drawerOverlay" onclick="toggleBriefDrawer()"></div>
+<div class="brief-drawer" id="briefDrawer">
+  <button class="brief-drawer-close" onclick="toggleBriefDrawer()">✕</button>
+  <h3 id="drawerTitle">Scenario Brief</h3>
+  <p id="drawerDescription"></p>
+  <h4>Evaluation Criteria</h4>
+  <ul id="drawerCriteria"></ul>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -214,265 +292,248 @@ const token = localStorage.getItem('auth_token');
 if (!token) window.location.href = '/?error=auth_required';
 
 const lang = localStorage.getItem('claudesim_lang') || 'en';
-let sessionId = null;
-let scenarioData = null;
-let promptCount = 0;
-let timerInterval = null;
-let startTime = null;
-let isLoading = false;
+const COMP_NAMES = {
+  C1: lang==='fr' ? 'Clarté du prompt' : 'Prompt Clarity',
+  C2: lang==='fr' ? 'Techniques avancées' : 'Advanced Techniques',
+  C3: lang==='fr' ? 'Itération stratégique' : 'Strategic Iteration',
+  C4: lang==='fr' ? 'Pensée critique' : 'Critical Thinking',
+  C5: lang==='fr' ? 'Efficacité' : 'Efficiency',
+  C6: lang==='fr' ? 'Éthique & limites' : 'Ethics & Limits'
+};
 
-// ========================
-// INIT
-// ========================
+let sessionId = null, scenarioData = null, scenarioId = null;
+let promptCount = 0, timerInterval = null, startTime = null, isLoading = false;
+
 async function init() {
   const params = new URLSearchParams(window.location.search);
-  const scenarioId = params.get('scenario');
+  scenarioId = params.get('scenario');
   sessionId = params.get('session');
+  if (sessionId) { await resumeSession(sessionId); }
+  else if (scenarioId) { await loadScenarioBrief(scenarioId); }
+  else { window.location.href = '/dashboard'; }
+}
 
-  if (sessionId) {
-    await resumeSession(sessionId);
-  } else if (scenarioId) {
-    await startNewSession(scenarioId);
-  } else {
-    window.location.href = '/dashboard';
+async function loadScenarioBrief(id) {
+  try {
+    const res = await fetch(`${API}/api/scenarios`);
+    const data = await res.json();
+    scenarioData = data.scenarios.find(s => s.id == id);
+    if (!scenarioData) { showToast('Scenario not found','error'); return; }
+    populateBriefScreen();
+  } catch(e) { showToast('Failed to load scenario','error'); }
+}
+
+function populateBriefScreen() {
+  const s = scenarioData;
+  const title = lang==='fr' ? s.title_fr : s.title_en;
+  const desc = lang==='fr' ? (s.description_fr||s.description_en) : s.description_en;
+  document.getElementById('briefTitle').textContent = title;
+  document.getElementById('briefDescription').textContent = desc;
+  document.getElementById('briefMission').textContent = desc;
+  document.getElementById('briefDomain').textContent = s.domain;
+  document.getElementById('briefLevel').textContent = s.level.charAt(0).toUpperCase()+s.level.slice(1);
+  document.getElementById('briefDuration').textContent = s.duration_min||30;
+  const criteria = s.evaluation_criteria||[];
+  document.getElementById('briefCritCount').textContent = criteria.length;
+  document.getElementById('briefCriteria').innerHTML = criteria.map(c=>`<li>${c.criterion} <span class="brief-criteria-weight">${c.weight}%</span></li>`).join('');
+  const comps = s.competencies||[];
+  document.getElementById('briefCompCount').textContent = comps.length;
+  document.getElementById('briefCompetencies').innerHTML = comps.map(c=>`<div class="brief-comp-tag">${c} — ${COMP_NAMES[c]||c}</div>`).join('');
+  if (lang==='fr') {
+    document.getElementById('missionLabel').textContent = 'Votre mission';
+    document.getElementById('criteriaLabel').textContent = "Critères d'évaluation";
+    document.getElementById('compTargetLabel').textContent = 'Compétences ciblées';
+    document.getElementById('compExplain').textContent = 'ARIA vous coachera sur ces compétences en temps réel pendant votre travail.';
+    document.getElementById('briefStartBtn').innerHTML = 'Commencer la simulation →';
+    document.getElementById('briefHint').textContent = "Vous interagirez avec Claude dans une interface partagée avec un coaching ARIA en temps réel.";
   }
 }
 
-async function startNewSession(scenarioId) {
+async function launchSimulation() {
+  const btn = document.getElementById('briefStartBtn');
+  btn.disabled = true; btn.innerHTML = lang==='fr' ? 'Lancement...' : 'Launching...';
   try {
     const res = await fetch(`${API}/api/simulation/start`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
       body: JSON.stringify({ scenarioId })
     });
     const data = await res.json();
-    if (!res.ok) { showToast(data.error, 'error'); setTimeout(() => window.location.href = '/dashboard', 2000); return; }
+    if (!res.ok) { showToast(data.error,'error'); btn.disabled=false; btn.innerHTML='Begin Simulation →'; return; }
     sessionId = data.session.id;
     scenarioData = data.scenario;
-    populateBrief();
-    startTimer();
-    // Update URL
-    history.replaceState(null, '', `/simulation?session=${sessionId}`);
-  } catch(e) { showToast('Failed to start simulation', 'error'); }
+    history.replaceState(null,'',`/simulation?session=${sessionId}`);
+    switchToSim();
+  } catch(e) { showToast('Failed to start simulation','error'); btn.disabled=false; btn.innerHTML='Begin Simulation →'; }
+}
+
+function switchToSim() {
+  document.getElementById('briefScreen').classList.add('hidden');
+  document.getElementById('simScreen').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  const s = scenarioData;
+  document.getElementById('topScenario').textContent = `${s.code||''} — ${lang==='fr' ? s.title_fr : s.title_en}`;
+  document.getElementById('drawerTitle').textContent = lang==='fr' ? s.title_fr : s.title_en;
+  document.getElementById('drawerDescription').textContent = lang==='fr' ? (s.description_fr||s.description_en) : s.description_en;
+  const criteria = s.evaluation_criteria||[];
+  document.getElementById('drawerCriteria').innerHTML = criteria.map(c=>`<li>${c.criterion} <span class="brief-criteria-weight">${c.weight}%</span></li>`).join('');
+  startTimer();
+  document.getElementById('chatInput').focus();
 }
 
 async function resumeSession(sid) {
   try {
-    const res = await fetch(`${API}/api/simulation/session?id=${sid}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
+    const res = await fetch(`${API}/api/simulation/session?id=${sid}`, { headers:{'Authorization':`Bearer ${token}`} });
     const data = await res.json();
-    if (!res.ok) { window.location.href = '/dashboard'; return; }
-    
+    if (!res.ok) { window.location.href='/dashboard'; return; }
     sessionId = data.session.id;
-    
-    // Load scenario info
     const scRes = await fetch(`${API}/api/scenarios`);
     const scData = await scRes.json();
     scenarioData = scData.scenarios.find(s => s.id === data.session.scenarioId);
-    
-    populateBrief();
-    
-    // Replay messages
+    document.getElementById('briefScreen').classList.add('hidden');
+    document.getElementById('simScreen').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    const s = scenarioData;
+    document.getElementById('topScenario').textContent = `${s.code||''} — ${lang==='fr'?s.title_fr:s.title_en}`;
+    document.getElementById('drawerTitle').textContent = lang==='fr'?s.title_fr:s.title_en;
+    document.getElementById('drawerDescription').textContent = lang==='fr'?(s.description_fr||s.description_en):s.description_en;
+    const criteria = s.evaluation_criteria||[];
+    document.getElementById('drawerCriteria').innerHTML = criteria.map(c=>`<li>${c.criterion} <span class="brief-criteria-weight">${c.weight}%</span></li>`).join('');
     const msgs = document.getElementById('chatMessages');
     msgs.innerHTML = '';
     data.interactions.forEach(i => {
-      if (i.role === 'user') {
-        promptCount++;
-        addMessage('user', i.content);
-      } else if (i.role === 'assistant') {
-        addMessage('assistant', i.content);
-      } else if (i.role === 'coach') {
-        try {
-          const tip = JSON.parse(i.content);
-          addAriaTip(tip.tip, tip.type, promptCount);
-          if (tip.scores) updateScores(tip.scores);
-        } catch(e) {}
-      }
+      if (i.role==='user') { promptCount++; addMessage('user',i.content); }
+      else if (i.role==='assistant') { addMessage('assistant',i.content); }
+      else if (i.role==='coach') { try { const tip=JSON.parse(i.content); addAriaTip(tip.tip,tip.type,promptCount); if(tip.scores)updateScores(tip.scores); } catch(e){} }
     });
-    
     document.getElementById('topPrompts').textContent = `Prompts: ${promptCount}`;
     startTimer(new Date(data.session.startedAt));
-  } catch(e) { window.location.href = '/dashboard'; }
+  } catch(e) { window.location.href='/dashboard'; }
 }
 
-function populateBrief() {
-  if (!scenarioData) return;
-  const s = scenarioData;
-  document.getElementById('topScenario').textContent = `${s.code || ''} — ${lang === 'fr' ? s.title_fr : s.title_en}`;
-  document.getElementById('briefText').textContent = lang === 'fr' ? (s.description_fr || s.description_en) : s.description_en;
-  
-  const criteria = s.evaluation_criteria || [];
-  const critList = document.getElementById('briefCriteria');
-  critList.innerHTML = criteria.map(c => `<li>${c.criterion} (${c.weight}%)</li>`).join('');
+function toggleBriefDrawer() {
+  document.getElementById('briefDrawer').classList.toggle('open');
+  document.getElementById('drawerOverlay').classList.toggle('open');
 }
 
-// ========================
-// CHAT
-// ========================
 function handleKeydown(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  // Auto-resize textarea
-  e.target.style.height = 'auto';
-  e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+  if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); sendMessage(); }
+  e.target.style.height='auto';
+  e.target.style.height=Math.min(e.target.scrollHeight,120)+'px';
 }
 
 async function sendMessage() {
   const input = document.getElementById('chatInput');
   const message = input.value.trim();
-  if (!message || isLoading) return;
-
-  isLoading = true;
-  document.getElementById('chatSend').disabled = true;
-  input.value = '';
-  input.style.height = 'auto';
-  
+  if (!message||isLoading) return;
+  isLoading=true;
+  document.getElementById('chatSend').disabled=true;
+  input.value=''; input.style.height='auto';
   promptCount++;
-  document.getElementById('topPrompts').textContent = `Prompts: ${promptCount}`;
-
-  addMessage('user', message);
+  document.getElementById('topPrompts').textContent=`Prompts: ${promptCount}`;
+  addMessage('user',message);
   showTyping();
-
   try {
     const res = await fetch(`${API}/api/simulation/chat`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
       body: JSON.stringify({ sessionId, message })
     });
     const data = await res.json();
     hideTyping();
-
-    if (!res.ok) { showToast(data.error, 'error'); return; }
-
-    addMessage('assistant', data.claude.content);
-
-    // ARIA coaching
-    if (data.aria) {
-      addAriaTip(data.aria.tip, data.aria.type, data.promptNumber);
-      if (data.aria.scores) updateScores(data.aria.scores);
-    }
-  } catch(e) {
-    hideTyping();
-    showToast('Failed to send message. Please try again.', 'error');
-  } finally {
-    isLoading = false;
-    document.getElementById('chatSend').disabled = false;
-    document.getElementById('chatInput').focus();
-  }
+    if (!res.ok) { showToast(data.error,'error'); return; }
+    addMessage('assistant',data.claude.content);
+    if (data.aria) { addAriaTip(data.aria.tip,data.aria.type,data.promptNumber); if(data.aria.scores) updateScores(data.aria.scores); }
+  } catch(e) { hideTyping(); showToast('Failed to send message.','error'); }
+  finally { isLoading=false; document.getElementById('chatSend').disabled=false; document.getElementById('chatInput').focus(); }
 }
 
 function addMessage(role, content) {
   const container = document.getElementById('chatMessages');
   const div = document.createElement('div');
   div.className = `msg msg-${role}`;
-  
-  // Simple markdown rendering
   let html = content
-    .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
-    .replace(/`([^`]+)`/g, '<code style="background:rgba(37,99,235,0.15);padding:2px 6px;border-radius:4px;font-size:13px;">$1</code>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n/g, '<br>');
-
-  div.innerHTML = `<div class="msg-label">${role === 'user' ? 'You' : 'Claude'}</div><div class="msg-bubble">${html}</div>`;
+    .replace(/```(\w*)\n([\s\S]*?)```/g,'<pre><code>$2</code></pre>')
+    .replace(/`([^`]+)`/g,'<code style="background:rgba(37,99,235,0.15);padding:2px 6px;border-radius:4px;font-size:13px;">$1</code>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\n/g,'<br>');
+  div.innerHTML=`<div class="msg-label">${role==='user'?(lang==='fr'?'Vous':'You'):'Claude'}</div><div class="msg-bubble">${html}</div>`;
   container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
+  container.scrollTop=container.scrollHeight;
 }
 
 function showTyping() {
-  const container = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.id = 'typingIndicator';
-  div.className = 'msg msg-assistant';
-  div.innerHTML = `<div class="msg-label">Claude</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
+  const container=document.getElementById('chatMessages');
+  const div=document.createElement('div');
+  div.id='typingIndicator'; div.className='msg msg-assistant';
+  div.innerHTML=`<div class="msg-label">Claude</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  container.appendChild(div); container.scrollTop=container.scrollHeight;
 }
 function hideTyping() { document.getElementById('typingIndicator')?.remove(); }
 
-// ========================
-// ARIA COACHING
-// ========================
-function addAriaTip(tip, type, num) {
-  const container = document.getElementById('ariaTips');
-  // Remove waiting message
+function addAriaTip(tip,type,num) {
+  const container=document.getElementById('ariaTips');
   container.querySelector('.aria-waiting')?.remove();
-  
-  const div = document.createElement('div');
-  div.className = 'aria-tip';
-  div.innerHTML = `
-    <span class="aria-tip-type ${type || 'nudge'}">${type || 'nudge'}</span>
-    <div class="aria-tip-text">${tip}</div>
-    <div class="aria-tip-num">After prompt #${num}</div>
-  `;
-  container.appendChild(div);
-  container.parentElement.scrollTop = container.parentElement.scrollHeight;
+  const div=document.createElement('div');
+  div.className='aria-tip';
+  div.innerHTML=`<span class="aria-tip-type ${type||'nudge'}">${type||'nudge'}</span><div class="aria-tip-text">${tip}</div><div class="aria-tip-num">After prompt #${num}</div>`;
+  container.appendChild(div); container.scrollTop=container.scrollHeight;
 }
 
 function updateScores(scores) {
-  for (const [key, val] of Object.entries(scores)) {
-    const num = key.replace('c', '');
-    const bar = document.getElementById(`barC${num}`);
-    const valEl = document.getElementById(`valC${num}`);
-    if (bar) { bar.style.width = (val / 5 * 100) + '%'; }
-    if (valEl) { valEl.textContent = val; }
+  for (const [key,val] of Object.entries(scores)) {
+    const num=key.replace('c','');
+    const bar=document.getElementById(`barC${num}`);
+    const valEl=document.getElementById(`valC${num}`);
+    if(bar) bar.style.width=(val/5*100)+'%';
+    if(valEl) valEl.textContent=val;
   }
 }
 
 async function requestHint() {
-  if (isLoading) return;
-  addAriaTip("💡 Think about what format you want the output in. Being specific about structure (bullet points? table? prose?) helps Claude deliver exactly what you need.", "micro-lesson", promptCount);
+  if(isLoading) return;
+  addAriaTip(lang==='fr'
+    ? "💡 Pensez au format de sortie souhaité. Être précis sur la structure aide Claude à livrer exactement ce dont vous avez besoin."
+    : "💡 Think about what output format you want. Being specific about structure helps Claude deliver exactly what you need.",
+    "micro-lesson", promptCount);
 }
 
-// ========================
-// TIMER
-// ========================
 function startTimer(from) {
   startTime = from ? new Date(from) : new Date();
   timerInterval = setInterval(() => {
-    const elapsed = Math.floor((Date.now() - startTime.getTime()) / 1000);
-    const min = Math.floor(elapsed / 60).toString().padStart(2, '0');
-    const sec = (elapsed % 60).toString().padStart(2, '0');
-    document.getElementById('topTimer').textContent = `${min}:${sec}`;
-  }, 1000);
+    const elapsed=Math.floor((Date.now()-startTime.getTime())/1000);
+    const min=Math.floor(elapsed/60).toString().padStart(2,'0');
+    const sec=(elapsed%60).toString().padStart(2,'0');
+    document.getElementById('topTimer').textContent=`${min}:${sec}`;
+  },1000);
 }
 
-// ========================
-// COMPLETE / ABANDON
-// ========================
 async function completeSim() {
-  if (promptCount < 1) { showToast('Send at least one prompt before submitting.', 'error'); return; }
-  if (!confirm(lang === 'fr' ? 'Soumettre votre livrable et terminer la simulation ?' : 'Submit your deliverable and end the simulation?')) return;
-
-  document.getElementById('btnSubmit').disabled = true;
-  document.getElementById('btnSubmit').textContent = 'Generating debrief...';
+  if(promptCount<1){showToast(lang==='fr'?'Envoyez au moins un prompt.':'Send at least one prompt.','error');return;}
+  if(!confirm(lang==='fr'?'Soumettre votre livrable et terminer?':'Submit deliverable and end simulation?'))return;
+  document.getElementById('btnSubmit').disabled=true;
+  document.getElementById('btnSubmit').textContent=lang==='fr'?'Génération du débrief...':'Generating debrief...';
   clearInterval(timerInterval);
-
   try {
-    const res = await fetch(`${API}/api/simulation/complete`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: JSON.stringify({ sessionId })
+    const res=await fetch(`${API}/api/simulation/complete`,{
+      method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+      body:JSON.stringify({sessionId})
     });
-    const data = await res.json();
-    if (!res.ok) { showToast(data.error, 'error'); return; }
-
-    // Store debrief data for the debrief page
-    localStorage.setItem('claudesim_debrief', JSON.stringify(data.debrief));
-    window.location.href = `/debrief?session=${sessionId}`;
-  } catch(e) {
-    showToast('Failed to complete simulation', 'error');
-    document.getElementById('btnSubmit').disabled = false;
-    document.getElementById('btnSubmit').textContent = '✓ Submit Deliverable';
-  }
+    const data=await res.json();
+    if(!res.ok){showToast(data.error,'error');return;}
+    localStorage.setItem('claudesim_debrief',JSON.stringify(data.debrief));
+    window.location.href=`/debrief?session=${sessionId}`;
+  } catch(e) { showToast('Failed to complete simulation','error'); document.getElementById('btnSubmit').disabled=false; document.getElementById('btnSubmit').textContent='✓ Submit Deliverable'; }
 }
 
 function abandonSim() {
-  if (!confirm(lang === 'fr' ? 'Abandonner cette simulation ?' : 'Abandon this simulation?')) return;
+  if(!confirm(lang==='fr'?'Abandonner cette simulation?':'Abandon this simulation?'))return;
   clearInterval(timerInterval);
-  window.location.href = '/dashboard';
+  window.location.href='/dashboard';
 }
 
-function showToast(msg, type) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = `toast ${type} show`;
-  setTimeout(() => t.classList.remove('show'), 3500);
+function showToast(msg,type) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast ${type} show`;
+  setTimeout(()=>t.classList.remove('show'),3500);
 }
 
 init();
