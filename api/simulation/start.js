@@ -21,9 +21,17 @@ export default async function handler(req, res) {
     const scenario = await ScenarioDB.findById(scenarioId);
     if (!scenario) return res.status(404).json({ error: 'Scenario not found' });
 
-    // Check plan limits
-    if (user.plan === 'free' && !scenario.is_free) {
-      return res.status(403).json({ error: 'This scenario requires a Pro plan. Upgrade to access all scenarios.' });
+    // Check plan limits — free users get 1 simulation total
+    if (user.plan === 'free') {
+      if (!scenario.is_free) {
+        return res.status(403).json({ error: 'upgrade_required', message: 'This scenario requires a Pro plan.' });
+      }
+      // Check if free user already used their 1 free simulation
+      const usedResult = await sql`SELECT COUNT(*) as count FROM simulation_sessions WHERE user_id = ${decoded.userId} AND status IN ('completed', 'active')`;
+      const usedCount = parseInt(usedResult.rows[0].count) || 0;
+      if (usedCount >= 1) {
+        return res.status(403).json({ error: 'upgrade_required', message: 'You\'ve used your free simulation. Upgrade to Pro for unlimited access!' });
+      }
     }
 
     // Check simulation limit (monthly)

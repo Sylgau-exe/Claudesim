@@ -197,6 +197,21 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
 .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
 
+/* UPGRADE MODAL */
+.upgrade-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(6px); z-index:200; align-items:center; justify-content:center; }
+.upgrade-overlay.active { display:flex; }
+.upgrade-modal { background:var(--bg-card); border:1px solid var(--border-accent); border-radius:16px; padding:40px; width:100%; max-width:480px; text-align:center; }
+.upgrade-modal h2 { font-size:24px; font-weight:800; margin-bottom:8px; }
+.upgrade-modal p { font-size:15px; color:var(--text-secondary); margin-bottom:28px; line-height:1.6; }
+.upgrade-plans { display:flex; gap:12px; margin-bottom:20px; }
+.upgrade-plan { flex:1; background:var(--bg-secondary); border:1px solid var(--border); border-radius:12px; padding:20px 16px; cursor:pointer; transition:all 0.2s; }
+.upgrade-plan:hover { border-color:var(--accent); }
+.upgrade-plan .plan-price { font-size:28px; font-weight:800; color:var(--accent-light); }
+.upgrade-plan .plan-period { font-size:13px; color:var(--text-muted); }
+.upgrade-plan .plan-label { font-size:12px; font-weight:600; margin-top:8px; color:var(--text-secondary); }
+.upgrade-plan.best { border-color:var(--accent); position:relative; }
+.upgrade-plan.best::before { content:'BEST VALUE'; position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:var(--accent); padding:2px 12px; border-radius:999px; font-size:10px; font-weight:700; color:white; letter-spacing:0.5px; }
+
 .toast { position: fixed; top: 60px; right: 20px; padding: 12px 20px; border-radius: 8px; font-size: 14px; z-index: 300; transform: translateX(150%); transition: transform 0.3s; }
 .toast.show { transform: translateX(0); }
 .toast.success { background: #065f46; color: #a7f3d0; border: 1px solid #10b981; }
@@ -334,6 +349,28 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
 
 <div class="toast" id="toast"></div>
 
+<!-- UPGRADE MODAL -->
+<div class="upgrade-overlay" id="upgradeOverlay">
+  <div class="upgrade-modal">
+    <div style="font-size:48px;margin-bottom:12px;">🔒</div>
+    <h2 id="upgradeTitle">Upgrade to Pro</h2>
+    <p id="upgradeText">You've completed your free simulation. Upgrade to unlock all scenarios, unlimited practice, and full ARIA coaching.</p>
+    <div class="upgrade-plans">
+      <div class="upgrade-plan" onclick="window.location.href='/#pricing'">
+        <div class="plan-price">$19</div>
+        <div class="plan-period">/month</div>
+        <div class="plan-label">Pro Monthly</div>
+      </div>
+      <div class="upgrade-plan best" onclick="window.location.href='/#pricing'">
+        <div class="plan-price">$149</div>
+        <div class="plan-period">once</div>
+        <div class="plan-label">Pro Lifetime</div>
+      </div>
+    </div>
+    <a href="/dashboard" style="font-size:13px;color:var(--text-muted);">← Back to Dashboard</a>
+  </div>
+</div>
+
 <script>
 const API = '';
 const token = localStorage.getItem('auth_token');
@@ -407,7 +444,14 @@ async function launchSimulation() {
       body: JSON.stringify({ scenarioId })
     });
     const data = await res.json();
-    if (!res.ok) { showToast(data.error,'error'); btn.disabled=false; btn.innerHTML='Begin Simulation →'; return; }
+    if (!res.ok) {
+      if (data.error === 'upgrade_required') {
+        showUpgradeModal(data.message);
+      } else {
+        showToast(data.error || data.message,'error');
+      }
+      btn.disabled=false; btn.innerHTML='Begin Simulation →'; return;
+    }
     sessionId = data.session.id;
     scenarioData = data.scenario;
     history.replaceState(null,'',`/simulation?session=${sessionId}`);
@@ -757,6 +801,16 @@ function showToast(msg,type) {
   const t=document.getElementById('toast');
   t.textContent=msg; t.className=`toast ${type} show`;
   setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+function showUpgradeModal(message) {
+  if (lang==='fr') {
+    document.getElementById('upgradeTitle').textContent = 'Passez à Pro';
+    document.getElementById('upgradeText').textContent = 'Vous avez utilisé votre simulation gratuite. Passez à Pro pour un accès illimité à tous les scénarios et au coaching complet d\'ARIA.';
+  } else if (message) {
+    document.getElementById('upgradeText').textContent = message;
+  }
+  document.getElementById('upgradeOverlay').classList.add('active');
 }
 
 init();

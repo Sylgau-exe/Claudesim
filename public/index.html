@@ -30,8 +30,8 @@
   "author": {"@type": "Organization", "name": "Panda Projet Inc.", "url": "https://pandaprojet.com"},
   "offers": [
     {"@type": "Offer", "price": "0", "priceCurrency": "USD", "name": "Discovery"},
-    {"@type": "Offer", "price": "29", "priceCurrency": "USD", "name": "Pro Monthly"},
-    {"@type": "Offer", "price": "249", "priceCurrency": "USD", "name": "Pro Lifetime"}
+    {"@type": "Offer", "price": "19", "priceCurrency": "USD", "name": "Pro Monthly"},
+    {"@type": "Offer", "price": "149", "priceCurrency": "USD", "name": "Pro Lifetime"}
   ]
 }
 </script>
@@ -413,32 +413,32 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
       <div class="pricing-card">
         <h3 data-i18n="plan_free_name">Discovery</h3>
         <div class="price">$0 <span></span></div>
-        <div class="price-note" data-i18n="plan_free_note">Free forever</div>
+        <div class="price-note" data-i18n="plan_free_note">Try before you buy</div>
         <ul class="pricing-features">
-          <li data-i18n="plan_free_f1">1 complete beginner scenario</li>
+          <li data-i18n="plan_free_f1">1 complete simulation (S01)</li>
           <li data-i18n="plan_free_f2">ARIA coaching included</li>
           <li data-i18n="plan_free_f3">Debrief report</li>
-          <li data-i18n="plan_free_f4">Competency snapshot</li>
+          <li data-i18n="plan_free_f4">Prompt scoring</li>
         </ul>
-        <button class="btn btn-secondary" onclick="showModal('register')" data-i18n="plan_free_cta">Get Started</button>
+        <button class="btn btn-secondary" onclick="showModal('register')" data-i18n="plan_free_cta">Get Started Free</button>
       </div>
       <div class="pricing-card featured">
         <h3 data-i18n="plan_pro_name">Pro Monthly</h3>
-        <div class="price">$29 <span data-i18n="plan_pro_period">/month</span></div>
-        <div class="price-note" data-i18n="plan_pro_note">10 simulations per month</div>
+        <div class="price">$19 <span data-i18n="plan_pro_period">/month</span></div>
+        <div class="price-note" data-i18n="plan_pro_note">Unlimited simulations</div>
         <ul class="pricing-features">
           <li data-i18n="plan_pro_f1">All scenarios (present & future)</li>
           <li data-i18n="plan_pro_f2">Full ARIA coaching</li>
           <li data-i18n="plan_pro_f3">Detailed debrief reports</li>
-          <li data-i18n="plan_pro_f4">Progress tracking & badges</li>
+          <li data-i18n="plan_pro_f4">Progress tracking</li>
           <li data-i18n="plan_pro_f5">Bilingual EN/FR</li>
         </ul>
-        <button class="btn btn-primary" onclick="handleCheckout('pro_monthly')" data-i18n="plan_pro_cta">Subscribe Now</button>
+        <button class="btn btn-primary" onclick="handleCheckout('pro_monthly')" data-i18n="plan_pro_cta">Subscribe — $19/mo</button>
       </div>
       <div class="pricing-card">
         <h3 data-i18n="plan_life_name">Pro Lifetime</h3>
-        <div class="price">$249 <span data-i18n="plan_life_period">once</span></div>
-        <div class="price-note" data-i18n="plan_life_note">20 simulations per month — forever</div>
+        <div class="price">$149 <span data-i18n="plan_life_period">once</span></div>
+        <div class="price-note" data-i18n="plan_life_note">Pay once, learn forever</div>
         <ul class="pricing-features">
           <li data-i18n="plan_life_f1">Everything in Pro</li>
           <li data-i18n="plan_life_f2">All future scenarios included</li>
@@ -446,7 +446,7 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
           <li data-i18n="plan_life_f4">Downloadable certificates</li>
           <li data-i18n="plan_life_f5">Best long-term value</li>
         </ul>
-        <button class="btn btn-primary" onclick="handleCheckout('pro_lifetime')" data-i18n="plan_life_cta">Get Lifetime Access</button>
+        <button class="btn btn-primary" onclick="handleCheckout('pro_lifetime')" data-i18n="plan_life_cta">Get Lifetime — $149</button>
       </div>
     </div>
     <p style="text-align:center;margin-top:24px;font-size:13px;color:var(--text-muted);" data-i18n="pr_enterprise">🏢 Enterprise plans from $2,500/year — <a href="mailto:info@pandaprojet.com">Contact us</a></p>
@@ -575,10 +575,10 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
 // CONFIG
 // ========================
 const API = '';
-const STRIPE_KEY = 'pk_live_YOUR_STRIPE_PUBLISHABLE_KEY'; // Replace with live key
+const STRIPE_KEY = 'pk_live_51Sk7xl2F7BCAvuz0Qo2M6YA5Ht3rvQ6l0cvUGkkT5mYZlYUsKY1wI9u3hpEG1wp8vEa6Uf0b7g6gNAD3aNigIqGv009i6pNgZ8';
 const PRICE_IDS = {
-  pro_monthly: 'price_XXXXX_monthly', // Replace with Stripe price IDs
-  pro_lifetime: 'price_XXXXX_lifetime'
+  pro_monthly: 'price_1T3ltn2F7BCAvuz0c0bi5kVB',
+  pro_lifetime: 'price_1T3luC2F7BCAvuz0oStYkdjJ'
 };
 
 let currentUser = null;

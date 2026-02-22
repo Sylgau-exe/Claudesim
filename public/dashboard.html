@@ -180,7 +180,11 @@ async function loadDashboard() {
     document.getElementById('statCompleted').textContent = data.stats.completedSessions;
     document.getElementById('statAvgScore').textContent = data.stats.avgScore || '-';
     const remaining = (userData.simulationsLimit || 1) - (userData.simulationsUsed || 0);
-    document.getElementById('statRemaining').textContent = Math.max(0, remaining);
+    if (userData.plan === 'free') {
+      document.getElementById('statRemaining').textContent = Math.max(0, remaining);
+    } else {
+      document.getElementById('statRemaining').textContent = '∞';
+    }
 
     // Competencies
     data.progress.forEach(p => {
@@ -214,12 +218,15 @@ async function loadScenarios() {
     const res = await fetch(`${API}/api/scenarios`);
     const data = await res.json();
     const list = document.getElementById('scenarioList');
-    list.innerHTML = data.scenarios.map(s => `
-      <div class="sc-card" onclick="startScenario(${s.id}, ${s.is_free})">
+    const isFreeUsed = userData.plan === 'free' && (parseInt(userData.simulationsUsed) || 0) >= 1;
+    list.innerHTML = data.scenarios.map(s => {
+      const locked = userData.plan === 'free' && (!s.is_free || isFreeUsed);
+      return `
+      <div class="sc-card${locked ? ' locked' : ''}" onclick="startScenario(${s.id}, ${s.is_free})" style="${locked ? 'opacity:0.7;' : ''}">
         <div class="sc-meta">
           <span class="sc-tag domain">${s.domain}</span>
           <span class="sc-tag level">${s.level}</span>
-          ${s.is_free ? '<span class="sc-tag free">FREE</span>' : '<span class="sc-tag pro">PRO</span>'}
+          ${s.is_free && !isFreeUsed ? '<span class="sc-tag free">FREE</span>' : locked ? '<span class="sc-tag pro">🔒 PRO</span>' : ''}
         </div>
         <h3>${lang === 'fr' ? s.title_fr : s.title_en}</h3>
         <p>${(lang === 'fr' ? (s.description_fr || s.description_en) : s.description_en).substring(0, 100)}...</p>
@@ -227,17 +234,50 @@ async function loadScenarios() {
           <span>⏱ ${s.duration_min} min</span>
           <span>${(s.competencies || []).join(', ')}</span>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   } catch(e) { console.error('Scenarios error:', e); }
 }
 
 function startScenario(id, isFree) {
-  if (!isFree && userData.plan === 'free') {
-    showToast('This scenario requires a Pro plan. Upgrade to access it.', 'error');
-    return;
+  if (userData.plan === 'free') {
+    const used = parseInt(userData.simulationsUsed) || 0;
+    if (!isFree || used >= 1) {
+      showUpgradeModal();
+      return;
+    }
   }
   window.location.href = `/simulation?scenario=${id}`;
+}
+
+function showUpgradeModal() {
+  const title = lang==='fr' ? 'Passez à Pro' : 'Upgrade to Pro';
+  const text = lang==='fr'
+    ? 'Vous avez utilisé votre simulation gratuite. Passez à Pro pour un accès illimité à tous les scénarios.'
+    : 'You\'ve used your free simulation. Upgrade to Pro for unlimited access to all scenarios.';
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);z-index:200;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML = `<div style="background:var(--bg-card);border:1px solid rgba(37,99,235,0.3);border-radius:16px;padding:40px;max-width:480px;text-align:center;">
+    <div style="font-size:48px;margin-bottom:12px;">🔒</div>
+    <h2 style="font-size:24px;font-weight:800;margin-bottom:8px;">${title}</h2>
+    <p style="font-size:15px;color:var(--text-secondary);margin-bottom:28px;line-height:1.6;">${text}</p>
+    <div style="display:flex;gap:12px;margin-bottom:20px;">
+      <a href="/#pricing" style="flex:1;background:var(--bg-secondary);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px 16px;text-decoration:none;display:block;">
+        <div style="font-size:28px;font-weight:800;color:#3b82f6;">$19</div>
+        <div style="font-size:13px;color:var(--text-muted);">/month</div>
+        <div style="font-size:12px;font-weight:600;margin-top:8px;color:var(--text-secondary);">Pro Monthly</div>
+      </a>
+      <a href="/#pricing" style="flex:1;background:var(--bg-secondary);border:1px solid var(--accent);border-radius:12px;padding:20px 16px;text-decoration:none;display:block;position:relative;">
+        <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);padding:2px 12px;border-radius:999px;font-size:10px;font-weight:700;color:white;">BEST VALUE</div>
+        <div style="font-size:28px;font-weight:800;color:#3b82f6;">$149</div>
+        <div style="font-size:13px;color:var(--text-muted);">once</div>
+        <div style="font-size:12px;font-weight:600;margin-top:8px;color:var(--text-secondary);">Pro Lifetime</div>
+      </a>
+    </div>
+    <button onclick="this.closest('div[style]').remove()" style="background:none;border:none;color:var(--text-muted);font-size:13px;cursor:pointer;font-family:inherit;">← Back to Dashboard</button>
+  </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 }
 
 function logout() { localStorage.removeItem('auth_token'); window.location.href = '/'; }
