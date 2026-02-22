@@ -294,28 +294,28 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
         <div class="demo-dot" style="background:#ef4444;"></div>
         <div class="demo-dot" style="background:#f59e0b;"></div>
         <div class="demo-dot" style="background:#10b981;"></div>
-        <div class="demo-topbar-title">ClaudeSim — S01 · Write a Professional Change Announcement Email</div>
+        <div class="demo-topbar-title" data-i18n="demo_topbar">ClaudeSim — S01 · Write a Professional Change Announcement Email</div>
       </div>
       <div class="demo-body">
         <div class="demo-chat">
           <div class="demo-msg user">
-            <div class="label">You</div>
-            Write me an email about the restructuring
+            <div class="label" data-i18n="demo_you">You</div>
+            <span data-i18n="demo_user_msg">Write me an email about the restructuring</span>
           </div>
           <div class="demo-msg assistant">
             <div class="label">Claude</div>
-            I'd be happy to help. To make it effective, could you provide more context? What type of restructuring, who is the audience, and what tone do you prefer?
+            <span data-i18n="demo_claude_msg">I'd be happy to help. To make it effective, could you provide more context? What type of restructuring, who is the audience, and what tone do you prefer?</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;padding:4px 0;">
-            <span style="font-size:12px;font-weight:700;color:#f87171;">Prompt Score: 15/100</span>
+            <span style="font-size:12px;font-weight:700;color:#f87171;" data-i18n="demo_score">Prompt Score: 15/100</span>
             <div style="width:60px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;"><div style="width:15%;height:100%;background:#f87171;border-radius:2px;"></div></div>
           </div>
-          <div style="background:rgba(245,158,11,0.1);border:1px dashed rgba(245,158,11,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#fbbf24;">📝 Prompt 1/3 — Review the response. Refine your prompt to improve it!</div>
+          <div style="background:rgba(245,158,11,0.1);border:1px dashed rgba(245,158,11,0.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#fbbf24;" data-i18n="demo_iteration">📝 Prompt 1/3 — Review the response. Refine your prompt to improve it!</div>
         </div>
         <div class="demo-aria">
           <div class="demo-aria-header">
             <img src="/aria.png" alt="ARIA">
-            <div><div class="name">ARIA</div><div class="role">AI Coach</div></div>
+            <div><div class="name">ARIA</div><div class="role" data-i18n="demo_aria_role">AI Coach</div></div>
           </div>
           <div class="demo-aria-scores">
             <div class="demo-score-row"><span class="code">C1</span><div class="demo-score-bar"><div class="demo-score-fill" style="width:20%;background:#f87171;"></div></div></div>
@@ -326,7 +326,7 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
             <div class="demo-score-row"><span class="code">C6</span><div class="demo-score-bar"><div class="demo-score-fill" style="width:60%;background:#3b82f6;"></div></div></div>
           </div>
           <div>
-            <div style="display:inline-block;font-size:11px;font-weight:700;background:rgba(245,158,11,0.15);color:#fbbf24;padding:3px 10px;border-radius:4px;margin-bottom:8px;">REDIRECT</div>
+            <div style="display:inline-block;font-size:11px;font-weight:700;background:rgba(245,158,11,0.15);color:#fbbf24;padding:3px 10px;border-radius:4px;margin-bottom:8px;" data-i18n="demo_redirect">REDIRECT</div>
             <div class="demo-coach-tip" data-i18n="demo_coach_tip">💡 Your prompt is too vague! Try specifying: your role, the audience, the tone, and key details about the change.</div>
           </div>
         </div>
@@ -594,12 +594,13 @@ const translations = {
     hero_subtitle: 'Maîtrisez le prompting IA à travers des simulations professionnelles interactives. Scénarios réels, coaching en temps réel, progression mesurable.',
     hero_cta: 'Simulation gratuite →', hero_cta2: 'Comment ça marche',
     stat_scenarios: 'Scénarios', stat_competencies: 'Compétences suivies', stat_practice: 'Possibilités de pratique',
-    demo_brief: '📋 Brief du scénario', demo_claude: '💬 Interface Claude', demo_aria: '🤖 Coach ARIA',
-    demo_brief_title: 'Scénario S01', demo_brief_text: 'Rédigez un courriel professionnel pour annoncer une restructuration organisationnelle affectant 45 employés. Maintenez le moral et la clarté.',
-    demo_level: 'Niveau : Débutant · 15 min', demo_chat_title: 'Chat avec Claude',
-    demo_prompt: '→ Écris-moi un courriel sur la restructuration', demo_response: 'Claude : "Voici une ébauche de courriel annonçant la restructuration organisationnelle..."',
-    demo_coach_tip: '💡 Ton prompt est assez large. Essaie de préciser le ton (empathique ? formel ?) et les points clés à couvrir. Ça aidera Claude à produire un résultat beaucoup plus ciblé.',
-    demo_coach_type: 'Type : Nudge technique',
+    demo_topbar: 'ClaudeSim — S01 · Rédigez un courriel professionnel d\'annonce de changement',
+    demo_you: 'Vous', demo_user_msg: 'Écris-moi un courriel sur la restructuration',
+    demo_claude_msg: 'Je serais ravi de vous aider. Pour le rendre efficace, pourriez-vous fournir plus de contexte ? Quel type de restructuration, qui est l\'audience, et quel ton préférez-vous ?',
+    demo_score: 'Score du prompt : 15/100',
+    demo_iteration: '📝 Prompt 1/3 — Révisez la réponse. Affinez votre prompt pour l\'améliorer !',
+    demo_aria_role: 'Coach IA', demo_redirect: 'REDIRECTION',
+    demo_coach_tip: '💡 Ton prompt est trop vague ! Essaie de préciser : ton rôle, l\'audience, le ton, et les détails clés sur le changement.',
     features_label: 'Pourquoi ClaudeSim', features_title: 'Comblez le fossé entre <span class="gradient-text">connaître</span> et <span class="gradient-text">utiliser</span> l\'IA',
     features_subtitle: 'Arrêtez les tutoriels. Pratiquez avec Claude dans des scénarios professionnels réels avec coaching expert.',
     f1_title: 'Simulations interactives', f1_text: 'Scénarios professionnels réels avec objectifs, contraintes et livrables. Vous utilisez Claude — pour vrai — dans notre interface split-screen.',
@@ -615,13 +616,13 @@ const translations = {
     sc_label: 'Catalogue de scénarios', sc_title: 'Scénarios <span class="gradient-text">professionnels réels</span>',
     sc_subtitle: 'Débutant à Avancé. Communication, Analyse, Stratégie, Recherche, Marketing, Juridique.',
     pr_label: 'Tarifs', pr_title: 'Commencez gratuit, <span class="gradient-text">passez Pro</span>',
-    pr_subtitle: 'Essayez votre première simulation gratuitement. Passez à Pro pour débloquer tous les scénarios.',
-    plan_free_name: 'Découverte', plan_free_note: 'Gratuit pour toujours',
-    plan_free_f1: '1 scénario débutant complet', plan_free_f2: 'Coaching ARIA inclus', plan_free_f3: 'Rapport de débrief', plan_free_f4: 'Aperçu des compétences', plan_free_cta: 'Commencer',
-    plan_pro_name: 'Pro Mensuel', plan_pro_period: '/mois', plan_pro_note: '10 simulations par mois',
-    plan_pro_f1: 'Tous les scénarios', plan_pro_f2: 'Coaching ARIA complet', plan_pro_f3: 'Rapports détaillés', plan_pro_f4: 'Suivi et badges', plan_pro_f5: 'Bilingue EN/FR', plan_pro_cta: 'S\'abonner',
-    plan_life_name: 'Pro à vie', plan_life_period: 'une fois', plan_life_note: '20 simulations/mois — pour toujours',
-    plan_life_f1: 'Tout dans Pro', plan_life_f2: 'Scénarios futurs inclus', plan_life_f3: 'Accès prioritaire', plan_life_f4: 'Certificats téléchargeables', plan_life_f5: 'Meilleur rapport qualité-prix', plan_life_cta: 'Accès à vie',
+    pr_subtitle: 'Essayez votre première simulation gratuitement. Passez à Pro pour un accès illimité.',
+    plan_free_name: 'Découverte', plan_free_note: 'Essayez avant d\'acheter',
+    plan_free_f1: '1 simulation complète (S01)', plan_free_f2: 'Coaching ARIA inclus', plan_free_f3: 'Rapport de débrief', plan_free_f4: 'Score de prompts', plan_free_cta: 'Commencer gratuitement',
+    plan_pro_name: 'Pro Mensuel', plan_pro_period: '/mois', plan_pro_note: 'Simulations illimitées',
+    plan_pro_f1: 'Tous les scénarios', plan_pro_f2: 'Coaching ARIA complet', plan_pro_f3: 'Rapports détaillés', plan_pro_f4: 'Suivi de progression', plan_pro_f5: 'Bilingue EN/FR', plan_pro_cta: 'S\'abonner — 19$/mois',
+    plan_life_name: 'Pro à vie', plan_life_period: 'une fois', plan_life_note: 'Payez une fois, apprenez pour toujours',
+    plan_life_f1: 'Tout dans Pro', plan_life_f2: 'Scénarios futurs inclus', plan_life_f3: 'Accès prioritaire', plan_life_f4: 'Certificats téléchargeables', plan_life_f5: 'Meilleur rapport qualité-prix', plan_life_cta: 'Accès à vie — 149$',
     pr_enterprise: '🏢 Plans entreprise à partir de 2 500$/an — <a href="mailto:info@pandaprojet.com">Contactez-nous</a>',
     faq_title: 'Questions <span class="gradient-text">fréquentes</span>',
     faq1_q: 'Ai-je besoin de mon propre compte Claude ?', faq1_a: 'Non ! ClaudeSim inclut l\'accès à Claude via notre intégration API. Vous interagissez directement dans la simulation.',
