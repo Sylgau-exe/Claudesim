@@ -266,7 +266,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
     </div>
     <div class="topbar-right">
       <button class="btn btn-abandon" onclick="abandonSim()">✕ Abandon</button>
-      <button class="btn btn-submit" onclick="completeSim()" id="btnSubmit">✓ Submit Deliverable</button>
+      <button class="btn btn-submit" onclick="completeSim()" id="btnSubmit" style="opacity:0.5;">✓ Submit (3 more)</button>
     </div>
   </div>
   <div class="sim-layout">
@@ -567,6 +567,16 @@ async function sendMessage() {
   promptCount++;
   document.getElementById('topPrompts').textContent=`Prompts: ${promptCount}`;
   document.getElementById('promptSuggestions')?.remove();
+  // Update submit button state
+  const MIN_PROMPTS = 3;
+  const submitBtn = document.getElementById('btnSubmit');
+  if (promptCount < MIN_PROMPTS) {
+    submitBtn.textContent = `✓ Submit (${MIN_PROMPTS - promptCount} more)`;
+    submitBtn.style.opacity = '0.5';
+  } else {
+    submitBtn.textContent = '✓ Submit Deliverable';
+    submitBtn.style.opacity = '1';
+  }
   addMessage('user',message);
   showTyping();
   try {
@@ -686,7 +696,14 @@ function startTimer(from) {
 }
 
 async function completeSim() {
-  if(promptCount<1){showToast(lang==='fr'?'Envoyez au moins un prompt.':'Send at least one prompt.','error');return;}
+  const MIN_PROMPTS = 3;
+  if(promptCount < MIN_PROMPTS){
+    showToast(lang==='fr'
+      ? `Vous devez envoyer au moins ${MIN_PROMPTS} prompts. Itérez et améliorez votre résultat ! (${promptCount}/${MIN_PROMPTS})`
+      : `Send at least ${MIN_PROMPTS} prompts before submitting. Iterate and improve your result! (${promptCount}/${MIN_PROMPTS})`,
+    'error');
+    return;
+  }
   if(!confirm(lang==='fr'?'Soumettre votre livrable et terminer?':'Submit deliverable and end simulation?'))return;
   document.getElementById('btnSubmit').disabled=true;
   document.getElementById('btnSubmit').textContent=lang==='fr'?'Génération du débrief...':'Generating debrief...';
