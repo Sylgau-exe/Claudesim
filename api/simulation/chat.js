@@ -136,7 +136,10 @@ Current prompt to analyze:
     // Parse ARIA response
     let ariaData;
     try {
-      ariaData = JSON.parse(ariaResponse.content);
+      // Strip markdown code blocks if present
+      let ariaContent = ariaResponse.content.trim();
+      ariaContent = ariaContent.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+      ariaData = JSON.parse(ariaContent);
     } catch {
       ariaData = { tip: ariaResponse.content, type: 'nudge', scores: { c1: 3, c2: 2, c3: 3, c4: 2, c5: 3, c6: 2 }, technique_detected: [] };
     }
