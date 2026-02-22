@@ -17,6 +17,7 @@ export default async function handler(req, res) {
       description_en: s.description_en, description_fr: s.description_fr,
       domain: s.domain, level: s.level,
       duration_min: s.duration_min,
+      evaluation_criteria: typeof s.evaluation_criteria === 'string' ? JSON.parse(s.evaluation_criteria) : (s.evaluation_criteria || []),
       competencies: s.competencies || [],
       is_free: s.is_free,
       locked: !s.is_free && (!decoded) // locked if not free and not logged in

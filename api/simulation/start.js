@@ -60,7 +60,7 @@ export default async function handler(req, res) {
         level: scenario.level,
         duration_min: scenario.duration_min,
         competencies: scenario.competencies,
-        evaluation_criteria: scenario.evaluation_criteria,
+        evaluation_criteria: typeof scenario.evaluation_criteria === 'string' ? JSON.parse(scenario.evaluation_criteria) : (scenario.evaluation_criteria || []),
         documents_json: scenario.documents_json
       }
     });

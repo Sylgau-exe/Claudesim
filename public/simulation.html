@@ -156,6 +156,18 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
 .brief-drawer li { padding: 8px 0; font-size: 14px; color: var(--text-secondary); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
 .brief-drawer li:last-child { border-bottom: none; }
 
+/* PROMPT SUGGESTIONS */
+.prompt-suggestions { padding: 8px 0; animation: fadeIn 0.5s ease; }
+.prompt-suggestions-label { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; }
+.prompt-suggestion { display: block; width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; color: var(--text-secondary); font-size: 14px; line-height: 1.5; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.prompt-suggestion:hover { border-color: var(--accent); background: rgba(37,99,235,0.08); color: var(--text-primary); }
+.prompt-suggestion .suggestion-tag { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; }
+.prompt-suggestion .suggestion-tag.beginner { background: rgba(16,185,129,0.15); color: #34d399; }
+.prompt-suggestion .suggestion-tag.intermediate { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.prompt-suggestion .suggestion-tag.advanced { background: rgba(168,85,247,0.15); color: #c084fc; }
+.prompt-suggestion .suggestion-tag.custom { background: rgba(37,99,235,0.15); color: var(--accent-light); }
+.prompt-suggestion-text { display: block; }
+
 .typing-indicator { display: flex; gap: 4px; padding: 8px 0; }
 .typing-dot { width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; animation: bounce 1.4s infinite; }
 .typing-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -241,8 +253,9 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
       <div class="chat-messages" id="chatMessages">
         <div class="msg msg-assistant">
           <div class="msg-label">Claude</div>
-          <div class="msg-bubble" id="welcomeMsg">Welcome! I'm ready to help you with this scenario. Write your first prompt below to get started.</div>
+          <div class="msg-bubble" id="welcomeMsg">Welcome! I'm ready to help you with this scenario. Choose a suggested prompt below, or write your own.</div>
         </div>
+        <div class="prompt-suggestions" id="promptSuggestions"></div>
       </div>
       <div class="chat-input-area">
         <div class="chat-input-wrap">
@@ -267,9 +280,9 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
         </div>
       </div>
       <div class="aria-tips-area" id="ariaTips">
-        <div class="aria-waiting"><div class="aria-waiting-icon">👀</div><p>I'm watching. Send your first prompt and I'll analyze your technique.</p></div>
+        <div class="aria-waiting"><div class="aria-waiting-icon"><img src="/aria.png" alt="ARIA" style="width:48px;height:48px;border-radius:12px;"></div><p>I'm watching. Send your first prompt and I'll analyze your technique.</p></div>
       </div>
-      <div class="aria-footer"><button class="aria-hint-btn" onclick="requestHint()">💡 Ask ARIA for a Hint</button></div>
+      <div class="aria-footer"><button class="aria-hint-btn" onclick="requestHint()"><img src="/aria.png" alt="ARIA" style="width:20px;height:20px;border-radius:4px;vertical-align:middle;margin-right:6px;">Ask ARIA for a Hint</button></div>
     </div>
   </div>
 </div>
@@ -377,6 +390,10 @@ function switchToSim() {
   const criteria = s.evaluation_criteria||[];
   document.getElementById('drawerCriteria').innerHTML = criteria.map(c=>`<li>${c.criterion} <span class="brief-criteria-weight">${c.weight}%</span></li>`).join('');
   startTimer();
+  showPromptSuggestions();
+  document.getElementById('welcomeMsg').textContent = lang==='fr'
+    ? 'Bienvenue ! Choisissez un prompt suggéré ci-dessous, ou écrivez le vôtre.'
+    : 'Welcome! Choose a suggested prompt below, or write your own.';
   document.getElementById('chatInput').focus();
 }
 
@@ -415,6 +432,83 @@ function toggleBriefDrawer() {
   document.getElementById('drawerOverlay').classList.toggle('open');
 }
 
+// ========================
+// PROMPT SUGGESTIONS
+// ========================
+const SUGGESTIONS = {
+  S01: {
+    en: [
+      { tag: 'beginner', text: 'Write me an email about the restructuring.' },
+      { tag: 'intermediate', text: 'Write a professional email to all staff announcing that 2 departments will be restructured, affecting 45 employees. Use an empathetic but clear tone. Include next steps and a Q&A session date.' },
+      { tag: 'advanced', text: 'Act as a corporate communications expert. Draft a 400-word internal email announcing an organizational restructuring affecting 45 employees across 2 departments. Structure: 1) Context & rationale, 2) What changes, 3) Support for affected employees, 4) Timeline & next steps. Tone: transparent, empathetic, forward-looking. Avoid jargon.' },
+      { tag: 'custom', text: '✍️ Write my own prompt' }
+    ],
+    fr: [
+      { tag: 'beginner', text: 'Écris-moi un courriel sur la restructuration.' },
+      { tag: 'intermediate', text: 'Rédige un courriel professionnel pour annoncer la restructuration de 2 départements touchant 45 employés. Utilise un ton empathique mais clair. Inclus les prochaines étapes et une date de séance Q&R.' },
+      { tag: 'advanced', text: 'Agis en expert en communications. Rédige un courriel interne de 400 mots annonçant une restructuration touchant 45 employés dans 2 départements. Structure : 1) Contexte et justification, 2) Ce qui change, 3) Soutien aux employés, 4) Calendrier et prochaines étapes. Ton : transparent, empathique, tourné vers l\'avenir.' },
+      { tag: 'custom', text: '✍️ Écrire mon propre prompt' }
+    ]
+  },
+  S02: {
+    en: [
+      { tag: 'beginner', text: 'Analyze the Q3 sales data for me.' },
+      { tag: 'intermediate', text: 'Analyze Q3 sales data and identify the top 3 trends. Compare to Q2 and highlight underperforming regions. Present as an executive summary.' },
+      { tag: 'advanced', text: 'You are a senior business analyst. Analyze Q3 sales data: 1) Top 3 revenue trends with % changes vs Q2, 2) Underperforming segments with root cause hypotheses, 3) 3 actionable Q4 strategies, 4) Present as a 1-page executive summary with key metrics.' },
+      { tag: 'custom', text: '✍️ Write my own prompt' }
+    ],
+    fr: [
+      { tag: 'beginner', text: 'Analyse les données de ventes du T3.' },
+      { tag: 'intermediate', text: 'Analyse les ventes du T3, identifie les 3 tendances principales. Compare au T2 et mets en évidence les régions sous-performantes. Présente en résumé exécutif.' },
+      { tag: 'advanced', text: 'Tu es analyste senior. Analyse les ventes T3 : 1) 3 tendances de revenus avec variations vs T2, 2) Segments sous-performants avec hypothèses, 3) 3 stratégies pour T4, 4) Résumé exécutif d\'une page avec métriques clés.' },
+      { tag: 'custom', text: '✍️ Écrire mon propre prompt' }
+    ]
+  },
+  S03: {
+    en: [
+      { tag: 'beginner', text: 'Help me create a 10-slide presentation for the board.' },
+      { tag: 'intermediate', text: 'Create an outline for a 10-slide strategic board presentation covering: market position, competitive analysis, growth strategy, and financial projections. Include speaker notes.' },
+      { tag: 'advanced', text: 'Act as VP of Strategy. Create a 10-slide board deck: Slide 1: Title. Slides 2-3: Market position (TAM/SAM/SOM). Slides 4-5: Competitive analysis (positioning + SWOT). Slides 6-7: Growth strategy (3 pillars with KPIs). Slides 8-9: 3-year financials. Slide 10: Ask & next steps. Include key message, data points, and speaker notes per slide.' },
+      { tag: 'custom', text: '✍️ Write my own prompt' }
+    ],
+    fr: [
+      { tag: 'beginner', text: 'Aide-moi à créer une présentation de 10 slides pour le CA.' },
+      { tag: 'intermediate', text: 'Crée un plan de présentation stratégique de 10 diapos : position de marché, concurrence, stratégie de croissance et projections financières. Inclus des notes d\'orateur.' },
+      { tag: 'advanced', text: 'Agis en VP Stratégie. Crée un deck de 10 diapos pour le CA : Diapo 1: Titre. 2-3: Marché (TAM/SAM/SOM). 4-5: Analyse concurrentielle (SWOT). 6-7: Croissance (3 piliers + KPIs). 8-9: Financier 3 ans. 10: Demande et étapes. Pour chaque diapo : message clé, données et notes.' },
+      { tag: 'custom', text: '✍️ Écrire mon propre prompt' }
+    ]
+  }
+};
+
+const TAG_LABELS = {
+  en: { beginner: 'Basic', intermediate: 'Better', advanced: 'Expert', custom: 'Your Turn' },
+  fr: { beginner: 'Basique', intermediate: 'Meilleur', advanced: 'Expert', custom: 'À vous' }
+};
+
+function showPromptSuggestions() {
+  const code = scenarioData?.code;
+  const container = document.getElementById('promptSuggestions');
+  if (!container || !code || !SUGGESTIONS[code]) return;
+  const suggestions = SUGGESTIONS[code][lang] || SUGGESTIONS[code]['en'];
+  const labels = TAG_LABELS[lang] || TAG_LABELS['en'];
+  container.innerHTML = `<div class="prompt-suggestions-label">${lang==='fr' ? '💡 Choisissez un prompt — du plus simple au plus avancé :' : '💡 Choose a prompt to start — from simplest to most advanced:'}</div>` +
+    suggestions.map((s, i) => `<button class="prompt-suggestion" onclick="useSuggestion(${i})"><span class="suggestion-tag ${s.tag}">${labels[s.tag]}</span><span class="prompt-suggestion-text">${s.text}</span></button>`).join('');
+}
+
+function useSuggestion(index) {
+  const code = scenarioData?.code;
+  const suggestions = SUGGESTIONS[code]?.[lang] || SUGGESTIONS[code]?.['en'];
+  if (!suggestions) return;
+  const s = suggestions[index];
+  document.getElementById('promptSuggestions')?.remove();
+  if (s.tag === 'custom') {
+    document.getElementById('chatInput').focus();
+  } else {
+    document.getElementById('chatInput').value = s.text;
+    sendMessage();
+  }
+}
+
 function handleKeydown(e) {
   if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); sendMessage(); }
   e.target.style.height='auto';
@@ -430,6 +524,7 @@ async function sendMessage() {
   input.value=''; input.style.height='auto';
   promptCount++;
   document.getElementById('topPrompts').textContent=`Prompts: ${promptCount}`;
+  document.getElementById('promptSuggestions')?.remove();
   addMessage('user',message);
   showTyping();
   try {
@@ -474,7 +569,7 @@ function addAriaTip(tip,type,num) {
   container.querySelector('.aria-waiting')?.remove();
   const div=document.createElement('div');
   div.className='aria-tip';
-  div.innerHTML=`<span class="aria-tip-type ${type||'nudge'}">${type||'nudge'}</span><div class="aria-tip-text">${tip}</div><div class="aria-tip-num">After prompt #${num}</div>`;
+  div.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><img src="/aria.png" alt="ARIA" style="width:22px;height:22px;border-radius:5px;"><span class="aria-tip-type ${type||'nudge'}">${type||'nudge'}</span></div><div class="aria-tip-text">${tip}</div><div class="aria-tip-num">After prompt #${num}</div>`;
   container.appendChild(div); container.scrollTop=container.scrollHeight;
 }
 
