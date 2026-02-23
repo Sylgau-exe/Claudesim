@@ -58,7 +58,7 @@ export default async function handler(req, res) {
 
         if (email) {
           const plan = mode === 'subscription' ? 'pro_monthly' : 'pro_lifetime';
-          const limit = mode === 'subscription' ? 10 : 20;
+          const limit = 9999; // Unlimited for pro
 
           await sql`
             UPDATE users SET
