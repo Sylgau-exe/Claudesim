@@ -295,12 +295,17 @@ function startScenario(id, isFree) {
 }
 
 function showUpgradeModal() {
+  // Remove any existing modal first
+  const existing = document.getElementById('upgradeModal');
+  if (existing) existing.remove();
+
   const title = lang==='fr' ? 'Passez à Pro' : 'Upgrade to Pro';
   const text = lang==='fr'
     ? 'Vous avez utilisé votre simulation gratuite. Passez à Pro pour un accès illimité à tous les scénarios.'
     : 'You\'ve used your free simulation. Upgrade to Pro for unlimited access to all scenarios.';
   const back = lang==='fr' ? '← Retour au tableau de bord' : '← Back to Dashboard';
   const modal = document.createElement('div');
+  modal.id = 'upgradeModal';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);z-index:200;display:flex;align-items:center;justify-content:center;';
   modal.innerHTML = `<div style="background:var(--bg-card);border:1px solid rgba(37,99,235,0.3);border-radius:16px;padding:40px;max-width:480px;text-align:center;">
     <div style="font-size:48px;margin-bottom:12px;">🔒</div>
@@ -319,11 +324,17 @@ function showUpgradeModal() {
         <div style="font-size:12px;font-weight:600;margin-top:8px;color:var(--text-secondary);">${lang==='fr'?'Pro à vie':'Pro Lifetime'}</div>
       </a>
     </div>
-    <button onclick="this.closest('div[style]').remove()" style="background:none;border:none;color:var(--text-muted);font-size:13px;cursor:pointer;font-family:inherit;">${back}</button>
+    <button onclick="document.getElementById('upgradeModal').remove()" style="background:none;border:none;color:var(--text-muted);font-size:13px;cursor:pointer;font-family:inherit;">${back}</button>
   </div>`;
   document.body.appendChild(modal);
   modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 }
+
+// Clear any stuck overlay on page load
+window.addEventListener('load', () => {
+  const stuck = document.getElementById('upgradeModal');
+  if (stuck && !document.querySelector('.scenario-card[onclick]')) stuck.remove();
+});
 
 function logout() { localStorage.removeItem('auth_token'); window.location.href = '/'; }
 function showToast(msg, type) { const t = document.getElementById('toast'); t.textContent = msg; t.className = `toast ${type} show`; setTimeout(() => t.classList.remove('show'), 3500); }

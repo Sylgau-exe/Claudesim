@@ -770,15 +770,18 @@ function logout() {
 async function handleCheckout(plan) {
   if (!currentUser) { showModal('register'); return; }
   try {
-    const stripe = Stripe(STRIPE_KEY);
-    const { error } = await stripe.redirectToCheckout({
-      lineItems: [{ price: PRICE_IDS[plan], quantity: 1 }],
-      mode: plan === 'pro_monthly' ? 'subscription' : 'payment',
-      customerEmail: currentUser.email,
-      successUrl: window.location.origin + '/dashboard?payment=success',
-      cancelUrl: window.location.origin + '#pricing',
+    const token = localStorage.getItem('auth_token');
+    const res = await fetch(`${API}/api/stripe/checkout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ plan })
     });
-    if (error) showToast(error.message, 'error');
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      showToast(data.error || 'Checkout failed', 'error');
+    }
   } catch(err) { showToast('Payment setup failed: ' + err.message, 'error'); }
 }
 
