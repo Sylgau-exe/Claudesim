@@ -661,6 +661,11 @@ function addMessage(role, content) {
     .replace(/```(\w*)\n([\s\S]*?)```/g,'<pre><code>$2</code></pre>')
     .replace(/`([^`]+)`/g,'<code style="background:rgba(37,99,235,0.15);padding:2px 6px;border-radius:4px;font-size:13px;">$1</code>')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/^### (.+)$/gm,'<strong style="font-size:14px;color:var(--accent-light);display:block;margin:12px 0 4px;">$1</strong>')
+    .replace(/^## (.+)$/gm,'<strong style="font-size:16px;color:var(--text-primary);display:block;margin:16px 0 6px;">$1</strong>')
+    .replace(/^# (.+)$/gm,'<strong style="font-size:18px;color:var(--text-primary);display:block;margin:16px 0 8px;">$1</strong>')
+    .replace(/^- (.+)$/gm,'<span style="display:block;padding-left:16px;">• $1</span>')
+    .replace(/^---$/gm,'<hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">')
     .replace(/\n/g,'<br>');
   div.innerHTML=`<div class="msg-label">${role==='user'?(lang==='fr'?'Vous':'You'):'Claude'}</div><div class="msg-bubble">${html}</div>`;
   container.appendChild(div);

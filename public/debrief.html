@@ -155,9 +155,31 @@ const lang = localStorage.getItem('claudesim_lang') || 'en';
 const COMP_NAMES = { c1: 'Clarity', c2: 'Advanced Techniques', c3: 'Strategic Iteration', c4: 'Critical Thinking', c5: 'Efficiency', c6: 'Ethics & Limits' };
 const COMP_NAMES_FR = { c1: 'Clarté', c2: 'Techniques avancées', c3: 'Itération stratégique', c4: 'Pensée critique', c5: 'Efficacité', c6: 'Éthique & Limites' };
 
+const TR = {
+  en: { debrief_title: '🎯 Debrief Report', sim_complete: 'Simulation Complete', global_score: 'Global Score', prompt_progression: 'Prompt Quality Progression', prompts_used: 'Prompts Used', minutes: 'Minutes', comp_scores: 'Competency Scores', strengths: '💪 Strengths', improvements: '🎯 Areas for Improvement', techniques: 'Techniques Analysis', next_steps: '📋 Next Steps', no_data: 'No debrief data found. Complete a simulation first.', try_again: '🔄 Try Again — Improve Your Score', back_dash: 'Back to Dashboard', print_report: '🖨 Print Report', needs_practice: '⚠️ Needs practice', getting_there: '💡 Getting there', good: '👍 Good', excellent: '🌟 Excellent', avg_prompt: 'Average Prompt Score' },
+  fr: { debrief_title: '🎯 Rapport de débrief', sim_complete: 'Simulation terminée', global_score: 'Score global', prompt_progression: 'Progression de la qualité des prompts', prompts_used: 'Prompts utilisés', minutes: 'Minutes', comp_scores: 'Scores des compétences', strengths: '💪 Forces', improvements: '🎯 Points à améliorer', techniques: 'Analyse des techniques', next_steps: '📋 Prochaines étapes', no_data: 'Aucune donnée de débrief trouvée. Complétez une simulation d\'abord.', try_again: '🔄 Réessayer — Améliorer votre score', back_dash: 'Retour au tableau de bord', print_report: '🖨 Imprimer le rapport', needs_practice: '⚠️ À travailler', getting_there: '💡 En progression', good: '👍 Bien', excellent: '🌟 Excellent', avg_prompt: 'Score moyen des prompts' }
+};
+const t = TR[lang] || TR.en;
+
 let scenarioIdForRetry = null;
 
 function init() {
+  // Apply language
+  document.querySelector('.debrief-header h1').textContent = t.debrief_title;
+  document.getElementById('debriefScenario').textContent = t.sim_complete;
+  document.querySelector('.score-value .label').textContent = t.global_score;
+  document.querySelector('#promptProgression h2').textContent = t.prompt_progression;
+  document.querySelectorAll('.meta-item .label')[0].textContent = t.prompts_used;
+  document.querySelectorAll('.meta-item .label')[1].textContent = t.minutes;
+  document.querySelector('.comp-section h2').textContent = t.comp_scores;
+  document.querySelectorAll('.analysis-card h3')[0].textContent = t.strengths;
+  document.querySelectorAll('.analysis-card h3')[1].textContent = t.improvements;
+  document.querySelector('.techniques h2').textContent = t.techniques;
+  document.querySelector('.reco-card h3').textContent = t.next_steps;
+  document.getElementById('retryBtn').textContent = t.try_again;
+  document.querySelectorAll('.cta-row .btn')[1].textContent = t.back_dash;
+  document.querySelectorAll('.cta-row .btn')[2].textContent = t.print_report;
+
   const stored = localStorage.getItem('claudesim_debrief');
   const scores = localStorage.getItem('claudesim_prompt_scores');
   if (stored) {
@@ -198,12 +220,12 @@ function renderPromptScores(scores) {
     </div>`;
   }).join('');
 
-  let tierLabel = '⚠️ Needs practice';
-  if (avg >= 80) tierLabel = '🌟 Excellent';
-  else if (avg >= 60) tierLabel = '👍 Good';
-  else if (avg >= 40) tierLabel = '💡 Getting there';
+  let tierLabel = t.needs_practice;
+  if (avg >= 80) tierLabel = t.excellent;
+  else if (avg >= 60) tierLabel = t.good;
+  else if (avg >= 40) tierLabel = t.getting_there;
 
-  document.getElementById('promptAvgLabel').innerHTML = `${lang==='fr' ? 'Score moyen des prompts' : 'Average Prompt Score'}: <strong style="color:var(--accent-light);font-size:18px;">${avg}/100</strong> — ${tierLabel}`;
+  document.getElementById('promptAvgLabel').innerHTML = `${t.avg_prompt}: <strong style="color:var(--accent-light);font-size:18px;">${avg}/100</strong> — ${tierLabel}`;
 }
 
 function retryScenario() {
