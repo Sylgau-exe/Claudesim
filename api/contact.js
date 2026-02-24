@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   const subject = `[ClaudeSim] ${typeLabels[type] || '📩 Contact'} from ${name}`;
 
   try {
-    await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: process.env.FROM_EMAIL || 'ClaudeSim <noreply@bizsimlive.com>',
       to: 'sylgauthier@gmail.com',
       replyTo: email,
@@ -42,6 +42,12 @@ export default async function handler(req, res) {
       `
     });
 
+    if (error) {
+      console.error('Resend error:', JSON.stringify(error));
+      return res.status(500).json({ error: 'Failed to send: ' + (error.message || JSON.stringify(error)) });
+    }
+
+    console.log('Email sent:', JSON.stringify(data));
     return res.status(200).json({ success: true });
   } catch (err) {
     console.error('Contact email error:', err);
