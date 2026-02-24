@@ -92,18 +92,37 @@ Generate the debrief report now.`;
     });
 
     const data = await response.json();
-    const debriefText = data.content.map(b => b.text || '').join('');
+    
+    if (!data.content || data.content.length === 0) {
+      console.error('Empty Claude response for debrief');
+      return res.status(500).json({ error: 'Empty debrief response' });
+    }
+    
+    let debriefText = data.content.map(b => b.text || '').join('');
+    console.log('Raw debrief response:', debriefText.substring(0, 200));
+    
+    // Strip markdown code fences if present
+    debriefText = debriefText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+    
+    // Try to extract JSON object if there's extra text
+    const jsonMatch = debriefText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      debriefText = jsonMatch[0];
+    }
     
     let debrief;
     try {
       debrief = JSON.parse(debriefText);
-    } catch {
+      console.log('Parsed debrief score:', debrief.score_global);
+    } catch (parseErr) {
+      console.error('JSON parse failed:', parseErr.message, 'Text:', debriefText.substring(0, 300));
       debrief = {
         score_global: 50, scores: { c1: 3, c2: 2, c3: 3, c4: 2, c5: 3, c6: 2 },
         strengths: ['Completed the simulation'], improvements: ['Practice more scenarios'],
         techniques_used: [], techniques_missed: [],
         recommendation: 'Keep practicing!',
-        summary_en: debriefText, summary_fr: debriefText
+        summary_en: 'Debrief generation encountered an issue. Your scores are approximate.',
+        summary_fr: 'La génération du débrief a rencontré un problème. Vos scores sont approximatifs.'
       };
     }
 

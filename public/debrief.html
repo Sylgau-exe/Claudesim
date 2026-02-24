@@ -77,6 +77,20 @@ nav{background:var(--bg-secondary);border-bottom:1px solid var(--border);padding
 .reco-card h3{font-size:16px;font-weight:700;margin-bottom:8px;}
 .reco-card p{font-size:14px;color:var(--text-secondary);line-height:1.6;}
 
+/* SCORE EXPLAINER */
+.score-explainer{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin:0 auto 32px;max-width:680px;cursor:pointer;}
+.score-explainer summary{font-size:14px;font-weight:600;color:var(--accent-light);list-style:none;display:flex;align-items:center;gap:8px;}
+.score-explainer summary::-webkit-details-marker{display:none;}
+.score-explainer summary::before{content:'ℹ️';}
+.score-explainer summary::after{content:'▸';margin-left:auto;transition:transform 0.2s;}
+.score-explainer[open] summary::after{transform:rotate(90deg);}
+.score-explainer .explain-body{margin-top:14px;font-size:13px;color:var(--text-secondary);line-height:1.7;}
+.score-explainer .explain-body strong{color:var(--text-primary);}
+.score-explainer .score-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+.score-compare-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.score-compare-item .sc-label{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:4px;}
+.score-compare-item .sc-desc{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+
 .cta-row{text-align:center;padding:20px 0 40px;}
 .cta-row .btn{margin:0 8px;}
 @media(max-width:768px){.analysis-grid{grid-template-columns:1fr;}.meta-row{flex-direction:column;gap:16px;}}
@@ -100,6 +114,25 @@ nav{background:var(--bg-secondary);border-bottom:1px solid var(--border);padding
     <svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fill" id="scoreCircle" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg>
     <div class="score-value"><div class="num" id="scoreNum">-</div><div class="label">Global Score</div></div>
   </div>
+
+  <!-- SCORE EXPLAINER -->
+  <details class="score-explainer" id="scoreExplainer">
+    <summary id="explainerTitle">How is my score calculated?</summary>
+    <div class="explain-body">
+      <p id="explainIntro">Your <strong>Global Score</strong> and your <strong>Prompt Scores</strong> measure different things — it's normal for them to differ significantly.</p>
+      <div class="score-compare">
+        <div class="score-compare-item">
+          <div class="sc-label" id="scLabel1">Global Score (0-100)</div>
+          <div class="sc-desc" id="scDesc1">Measures your <strong>overall competency</strong> across 6 dimensions: Clarity, Advanced Techniques, Strategic Iteration, Critical Thinking, Efficiency, and Ethics. ARIA evaluates your approach, not just your prompts. You can score well here even with imperfect prompts — if your reasoning and strategy are sound.</div>
+        </div>
+        <div class="score-compare-item">
+          <div class="sc-label" id="scLabel2">Prompt Scores (0-100 each)</div>
+          <div class="sc-desc" id="scDesc2">Measures the <strong>technical quality of each individual prompt</strong> — specificity, structure, context, constraints, and formatting. These are intentionally strict. A first attempt at prompting typically scores 15-35. Improvement through iteration is the goal.</div>
+        </div>
+      </div>
+      <p style="margin-top:14px;" id="explainExample"><strong>Example:</strong> A learner writes vague prompts (Prompt Score: 20) but demonstrates good critical thinking by questioning Claude's output, iterating strategically, and recognizing limitations → Global Score: 55. The prompts need work, but the competencies are emerging.</p>
+    </div>
+  </details>
 
   <!-- PROMPT PROGRESSION -->
   <div id="promptProgression" style="margin-bottom:32px;display:none;">
@@ -156,8 +189,20 @@ const COMP_NAMES = { c1: 'Clarity', c2: 'Advanced Techniques', c3: 'Strategic It
 const COMP_NAMES_FR = { c1: 'Clarté', c2: 'Techniques avancées', c3: 'Itération stratégique', c4: 'Pensée critique', c5: 'Efficacité', c6: 'Éthique & Limites' };
 
 const TR = {
-  en: { debrief_title: '🎯 Debrief Report', sim_complete: 'Simulation Complete', global_score: 'Global Score', prompt_progression: 'Prompt Quality Progression', prompts_used: 'Prompts Used', minutes: 'Minutes', comp_scores: 'Competency Scores', strengths: '💪 Strengths', improvements: '🎯 Areas for Improvement', techniques: 'Techniques Analysis', next_steps: '📋 Next Steps', no_data: 'No debrief data found. Complete a simulation first.', try_again: '🔄 Try Again — Improve Your Score', back_dash: 'Back to Dashboard', print_report: '🖨 Print Report', needs_practice: '⚠️ Needs practice', getting_there: '💡 Getting there', good: '👍 Good', excellent: '🌟 Excellent', avg_prompt: 'Average Prompt Score' },
-  fr: { debrief_title: '🎯 Rapport de débrief', sim_complete: 'Simulation terminée', global_score: 'Score global', prompt_progression: 'Progression de la qualité des prompts', prompts_used: 'Prompts utilisés', minutes: 'Minutes', comp_scores: 'Scores des compétences', strengths: '💪 Forces', improvements: '🎯 Points à améliorer', techniques: 'Analyse des techniques', next_steps: '📋 Prochaines étapes', no_data: 'Aucune donnée de débrief trouvée. Complétez une simulation d\'abord.', try_again: '🔄 Réessayer — Améliorer votre score', back_dash: 'Retour au tableau de bord', print_report: '🖨 Imprimer le rapport', needs_practice: '⚠️ À travailler', getting_there: '💡 En progression', good: '👍 Bien', excellent: '🌟 Excellent', avg_prompt: 'Score moyen des prompts' }
+  en: { debrief_title: '🎯 Debrief Report', sim_complete: 'Simulation Complete', global_score: 'Global Score', prompt_progression: 'Prompt Quality Progression', prompts_used: 'Prompts Used', minutes: 'Minutes', comp_scores: 'Competency Scores', strengths: '💪 Strengths', improvements: '🎯 Areas for Improvement', techniques: 'Techniques Analysis', next_steps: '📋 Next Steps', no_data: 'No debrief data found. Complete a simulation first.', try_again: '🔄 Try Again — Improve Your Score', back_dash: 'Back to Dashboard', print_report: '🖨 Print Report', needs_practice: '⚠️ Needs practice', getting_there: '💡 Getting there', good: '👍 Good', excellent: '🌟 Excellent', avg_prompt: 'Average Prompt Score',
+    explainer_title: 'How is my score calculated?',
+    explain_intro: 'Your <strong>Global Score</strong> and your <strong>Prompt Scores</strong> measure different things — it\'s normal for them to differ significantly.',
+    sc_label1: 'Global Score (0-100)', sc_desc1: 'Measures your <strong>overall competency</strong> across 6 dimensions: Clarity, Advanced Techniques, Strategic Iteration, Critical Thinking, Efficiency, and Ethics. ARIA evaluates your approach, not just your prompts. You can score well here even with imperfect prompts — if your reasoning and strategy are sound.',
+    sc_label2: 'Prompt Scores (0-100 each)', sc_desc2: 'Measures the <strong>technical quality of each individual prompt</strong> — specificity, structure, context, constraints, and formatting. These are intentionally strict. A first attempt at prompting typically scores 15-35. Improvement through iteration is the goal.',
+    explain_example: '<strong>Example:</strong> A learner writes vague prompts (Prompt Score: 20) but demonstrates good critical thinking by questioning Claude\'s output, iterating strategically, and recognizing limitations → Global Score: 55. The prompts need work, but the competencies are emerging.'
+  },
+  fr: { debrief_title: '🎯 Rapport de débrief', sim_complete: 'Simulation terminée', global_score: 'Score global', prompt_progression: 'Progression de la qualité des prompts', prompts_used: 'Prompts utilisés', minutes: 'Minutes', comp_scores: 'Scores des compétences', strengths: '💪 Forces', improvements: '🎯 Points à améliorer', techniques: 'Analyse des techniques', next_steps: '📋 Prochaines étapes', no_data: 'Aucune donnée de débrief trouvée. Complétez une simulation d\'abord.', try_again: '🔄 Réessayer — Améliorer votre score', back_dash: 'Retour au tableau de bord', print_report: '🖨 Imprimer le rapport', needs_practice: '⚠️ À travailler', getting_there: '💡 En progression', good: '👍 Bien', excellent: '🌟 Excellent', avg_prompt: 'Score moyen des prompts',
+    explainer_title: 'Comment mon score est-il calculé ?',
+    explain_intro: 'Votre <strong>Score global</strong> et vos <strong>Scores de prompts</strong> mesurent des choses différentes — il est normal qu\'ils diffèrent significativement.',
+    sc_label1: 'Score global (0-100)', sc_desc1: 'Mesure votre <strong>compétence globale</strong> sur 6 dimensions : Clarté, Techniques avancées, Itération stratégique, Pensée critique, Efficacité et Éthique. ARIA évalue votre approche, pas seulement vos prompts. Vous pouvez bien scorer ici même avec des prompts imparfaits — si votre raisonnement et votre stratégie sont solides.',
+    sc_label2: 'Scores de prompts (0-100 chacun)', sc_desc2: 'Mesure la <strong>qualité technique de chaque prompt individuel</strong> — spécificité, structure, contexte, contraintes et formatage. Ces scores sont intentionnellement stricts. Un premier essai de prompting score typiquement 15-35. L\'amélioration par l\'itération est l\'objectif.',
+    explain_example: '<strong>Exemple :</strong> Un apprenant écrit des prompts vagues (Score prompt : 20) mais démontre une bonne pensée critique en questionnant la réponse de Claude, en itérant stratégiquement et en reconnaissant les limites → Score global : 55. Les prompts ont besoin de travail, mais les compétences émergent.'
+  }
 };
 const t = TR[lang] || TR.en;
 
@@ -179,6 +224,14 @@ function init() {
   document.getElementById('retryBtn').textContent = t.try_again;
   document.querySelectorAll('.cta-row .btn')[1].textContent = t.back_dash;
   document.querySelectorAll('.cta-row .btn')[2].textContent = t.print_report;
+  // Score explainer
+  document.getElementById('explainerTitle').textContent = t.explainer_title;
+  document.getElementById('explainIntro').innerHTML = t.explain_intro;
+  document.getElementById('scLabel1').textContent = t.sc_label1;
+  document.getElementById('scDesc1').innerHTML = t.sc_desc1;
+  document.getElementById('scLabel2').textContent = t.sc_label2;
+  document.getElementById('scDesc2').innerHTML = t.sc_desc2;
+  document.getElementById('explainExample').innerHTML = t.explain_example;
 
   const stored = localStorage.getItem('claudesim_debrief');
   const scores = localStorage.getItem('claudesim_prompt_scores');

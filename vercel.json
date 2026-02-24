@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/simulation/complete.js": { "maxDuration": 60 },
+    "api/simulation/chat.js": { "maxDuration": 60 },
+    "api/simulation/start.js": { "maxDuration": 30 }
+  },
   "rewrites": [
     { "source": "/dashboard", "destination": "/dashboard.html" },
     { "source": "/simulation", "destination": "/simulation.html" },

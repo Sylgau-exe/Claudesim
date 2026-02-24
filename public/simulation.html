@@ -25,6 +25,31 @@ gtag("config", "G-XVQTC9C1DE");
 body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
 
 /* ==============================
+   PHASE 0: LEARN SCREEN
+   ============================== */
+.learn-screen { min-height: 100vh; display: flex; flex-direction: column; background: var(--bg-primary); }
+.learn-screen.hidden { display: none; }
+.learn-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; max-width: 800px; margin: 0 auto; width: 100%; }
+.learn-step-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.3); border-radius: 999px; font-size: 13px; color: #f97316; font-weight: 600; margin-bottom: 20px; }
+.learn-title { font-size: clamp(24px, 3.5vw, 36px); font-weight: 800; text-align: center; margin-bottom: 8px; }
+.learn-subtitle { font-size: 16px; color: var(--text-secondary); text-align: center; margin-bottom: 32px; max-width: 580px; line-height: 1.6; }
+.learn-video-wrap { width: 100%; max-width: 720px; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #000; margin-bottom: 28px; position: relative; }
+.learn-video-wrap iframe { width: 100%; height: 100%; border: none; }
+.learn-video-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg-card); color: var(--text-muted); gap: 8px; }
+.learn-video-placeholder .play-icon { font-size: 48px; }
+.learn-tips { width: 100%; max-width: 720px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 32px; }
+.learn-tip { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+.learn-tip .tip-icon { font-size: 24px; margin-bottom: 6px; }
+.learn-tip .tip-title { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.learn-tip .tip-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+.learn-actions { display: flex; gap: 12px; align-items: center; }
+.learn-continue { padding: 14px 32px; background: linear-gradient(135deg, #1e3a5f, #2563eb); color: white; font-weight: 700; font-size: 16px; border: none; border-radius: 10px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.learn-continue:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(37,99,235,0.4); }
+.learn-skip { padding: 14px 24px; background: transparent; color: var(--text-muted); font-size: 14px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.learn-skip:hover { color: var(--text-secondary); border-color: rgba(255,255,255,0.15); }
+@media (max-width: 600px) { .learn-tips { grid-template-columns: 1fr; } }
+
+/* ==============================
    PHASE 1: FULL-SCREEN BRIEF
    ============================== */
 .brief-screen { min-height: 100vh; display: flex; flex-direction: column; }
@@ -234,8 +259,51 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: v
 </head>
 <body>
 
+<!-- PHASE 0: LEARN SCREEN -->
+<div class="learn-screen hidden" id="learnScreen">
+  <div class="brief-nav">
+    <div class="brief-nav-logo">Claude<span>Sim</span></div>
+    <a href="/dashboard" class="brief-nav-back">← <span data-learn="back">Back to Dashboard</span></a>
+  </div>
+  <div class="learn-body">
+    <div class="learn-step-badge"><span data-learn="step">📚 Step 1 of 2 — Learn</span></div>
+    <h1 class="learn-title" data-learn="title">Before You Start</h1>
+    <p class="learn-subtitle" data-learn="subtitle">Watch this 5-minute introduction to prompt engineering. Understanding the basics will help you get much better scores in your simulation.</p>
+    
+    <div class="learn-video-wrap" id="learnVideoWrap">
+      <div class="learn-video-placeholder" id="learnVideoPlaceholder">
+        <div class="play-icon">▶️</div>
+        <div style="font-size:14px;" data-learn="video_placeholder">Video coming soon</div>
+      </div>
+    </div>
+    
+    <div class="learn-tips">
+      <div class="learn-tip">
+        <div class="tip-icon">🎯</div>
+        <div class="tip-title" data-learn="tip1_title">Be Specific</div>
+        <div class="tip-desc" data-learn="tip1_desc">Give Claude context, constraints, and the exact format you want. Vague prompts = vague results.</div>
+      </div>
+      <div class="learn-tip">
+        <div class="tip-icon">🔄</div>
+        <div class="tip-title" data-learn="tip2_title">Iterate</div>
+        <div class="tip-desc" data-learn="tip2_desc">Don't expect perfection on prompt #1. Review the output, refine, and re-prompt. That's the skill.</div>
+      </div>
+      <div class="learn-tip">
+        <div class="tip-icon">🧠</div>
+        <div class="tip-title" data-learn="tip3_title">Think Critically</div>
+        <div class="tip-desc" data-learn="tip3_desc">Don't accept everything Claude says. Question it, ask for sources, verify claims. That's competency.</div>
+      </div>
+    </div>
+
+    <div class="learn-actions">
+      <button class="learn-continue" onclick="showBriefScreen()" id="learnContinueBtn" data-learn="continue">Continue to Briefing →</button>
+      <button class="learn-skip" onclick="showBriefScreen()" data-learn="skip">Skip — I know the basics</button>
+    </div>
+  </div>
+</div>
+
 <!-- PHASE 1: FULL-SCREEN BRIEF -->
-<div class="brief-screen" id="briefScreen">
+<div class="brief-screen hidden" id="briefScreen">
   <div class="brief-nav">
     <div class="brief-nav-logo">Claude<span>Sim</span></div>
     <a href="/dashboard" class="brief-nav-back">← Back to Dashboard</a>
@@ -403,8 +471,40 @@ async function init() {
   scenarioId = params.get('scenario');
   sessionId = params.get('session');
   if (sessionId) { await resumeSession(sessionId); }
-  else if (scenarioId) { await loadScenarioBrief(scenarioId); }
+  else if (scenarioId) {
+    await loadScenarioBrief(scenarioId);
+    // Show learn screen first, hide brief
+    document.getElementById('learnScreen').classList.remove('hidden');
+    document.getElementById('briefScreen').classList.add('hidden');
+    applyLearnLang();
+    initLearnVideo();
+  }
   else { window.location.href = '/dashboard'; }
+}
+
+function showBriefScreen() {
+  document.getElementById('learnScreen').classList.add('hidden');
+  document.getElementById('briefScreen').classList.remove('hidden');
+}
+
+const LEARN_TR = {
+  en: { back:'Back to Dashboard', step:'📚 Step 1 of 2 — Learn', title:'Before You Start', subtitle:'Watch this 5-minute introduction to prompt engineering. Understanding the basics will help you get much better scores in your simulation.', video_placeholder:'Video coming soon', tip1_title:'Be Specific', tip1_desc:"Give Claude context, constraints, and the exact format you want. Vague prompts = vague results.", tip2_title:'Iterate', tip2_desc:"Don't expect perfection on prompt #1. Review the output, refine, and re-prompt. That's the skill.", tip3_title:'Think Critically', tip3_desc:"Don't accept everything Claude says. Question it, ask for sources, verify claims. That's competency.", continue:'Continue to Briefing →', skip:'Skip — I know the basics' },
+  fr: { back:'Retour au tableau de bord', step:'📚 Étape 1 sur 2 — Apprendre', title:'Avant de commencer', subtitle:"Regardez cette introduction de 5 minutes à l'ingénierie de prompts. Comprendre les bases vous aidera à obtenir de bien meilleurs scores dans votre simulation.", video_placeholder:'Vidéo à venir', tip1_title:'Soyez précis', tip1_desc:"Donnez à Claude du contexte, des contraintes et le format exact souhaité. Prompts vagues = résultats vagues.", tip2_title:'Itérez', tip2_desc:"N'attendez pas la perfection au prompt #1. Examinez le résultat, affinez et re-promptez. C'est ça la compétence.", tip3_title:'Pensez de façon critique', tip3_desc:"N'acceptez pas tout ce que Claude dit. Questionnez, demandez des sources, vérifiez les affirmations.", continue:'Continuer vers le briefing →', skip:'Passer — Je connais les bases' }
+};
+
+function applyLearnLang() {
+  const tr = LEARN_TR[lang] || LEARN_TR.en;
+  document.querySelectorAll('[data-learn]').forEach(el => {
+    const key = el.getAttribute('data-learn');
+    if (tr[key]) el.textContent = tr[key];
+  });
+}
+
+function initLearnVideo() {
+  const videoId = window.CLAUDESIM_LEARN_VIDEO || 'LAF-lACf2QY';
+  if (videoId) {
+    document.getElementById('learnVideoWrap').innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  }
 }
 
 async function loadScenarioBrief(id) {
@@ -429,7 +529,7 @@ function populateBriefScreen() {
   document.getElementById('briefDuration').textContent = s.duration_min||30;
   const criteria = s.evaluation_criteria||[];
   document.getElementById('briefCritCount').textContent = criteria.length;
-  document.getElementById('briefCriteria').innerHTML = criteria.map(c=>`<li>${c.criterion} <span class="brief-criteria-weight">${c.weight}%</span></li>`).join('');
+  document.getElementById('briefCriteria').innerHTML = criteria.map(c=>`<li>${((lang==='fr'&&c.criterion_fr)?c.criterion_fr:c.criterion)} <span class="brief-criteria-weight">${c.weight}%</span></li>`).join('');
   const comps = s.competencies||[];
   document.getElementById('briefCompCount').textContent = comps.length;
   document.getElementById('briefCompetencies').innerHTML = comps.map(c=>`<div class="brief-comp-tag">${c} — ${COMP_NAMES[c]||c}</div>`).join('');
@@ -476,7 +576,7 @@ function switchToSim() {
   document.getElementById('drawerTitle').textContent = lang==='fr' ? s.title_fr : s.title_en;
   document.getElementById('drawerDescription').textContent = lang==='fr' ? (s.description_fr||s.description_en) : s.description_en;
   const criteria = s.evaluation_criteria||[];
-  document.getElementById('drawerCriteria').innerHTML = criteria.map(c=>`<li>${c.criterion} <span class="brief-criteria-weight">${c.weight}%</span></li>`).join('');
+  document.getElementById('drawerCriteria').innerHTML = criteria.map(c=>`<li>${((lang==='fr'&&c.criterion_fr)?c.criterion_fr:c.criterion)} <span class="brief-criteria-weight">${c.weight}%</span></li>`).join('');
   startTimer();
   // Show mission banner
   const desc = lang==='fr' ? (s.description_fr||s.description_en) : s.description_en;
@@ -513,7 +613,7 @@ async function resumeSession(sid) {
     document.getElementById('drawerTitle').textContent = lang==='fr'?s.title_fr:s.title_en;
     document.getElementById('drawerDescription').textContent = lang==='fr'?(s.description_fr||s.description_en):s.description_en;
     const criteria = s.evaluation_criteria||[];
-    document.getElementById('drawerCriteria').innerHTML = criteria.map(c=>`<li>${c.criterion} <span class="brief-criteria-weight">${c.weight}%</span></li>`).join('');
+    document.getElementById('drawerCriteria').innerHTML = criteria.map(c=>`<li>${((lang==='fr'&&c.criterion_fr)?c.criterion_fr:c.criterion)} <span class="brief-criteria-weight">${c.weight}%</span></li>`).join('');
     const msgs = document.getElementById('chatMessages');
     msgs.innerHTML = '';
     data.interactions.forEach(i => {
