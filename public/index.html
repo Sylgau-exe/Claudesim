@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ClaudeSim — Learn Claude by Doing | AI Literacy Simulation Platform</title>
-<meta name="description" content="Master Claude through interactive professional simulations. Real scenarios, real-time AI coaching, measurable skill progression. By Panda Projet.">
-<meta name="keywords" content="Claude AI training, AI literacy, prompting skills, AI simulation, learn Claude, Anthropic, prompt engineering, AI coaching">
+<title>ClaudeSim — Master AI Skills Through Simulation | Prompt, Spec & Intent Engineering</title>
+<meta name="description" content="20 interactive simulations across 3 skill tiers: Prompt Engineering, Specification Engineering, and Intent Engineering. Real-time AI coaching by ARIA. Bilingual EN/FR. By Panda Projet.">
+<meta name="keywords" content="Claude AI training, AI literacy, prompt engineering, specification engineering, intent engineering, AI simulation, learn Claude, Anthropic, AI coaching, ARIA coach, AI skills, professional AI training">
 <meta name="author" content="Panda Projet Inc.">
-<meta property="og:title" content="ClaudeSim — Learn Claude by Doing">
-<meta property="og:description" content="The only platform where you practice with Claude in real professional scenarios with AI coaching.">
+<meta property="og:title" content="ClaudeSim — Master AI Through 3 Skill Tiers">
+<meta property="og:description" content="20 simulations across Prompt, Specification & Intent Engineering. Real scenarios, real-time AI coaching, measurable progression.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://claudesim.app">
 <meta property="og:image" content="https://claudesim.app/og-image.png">
@@ -25,13 +25,14 @@
   "name": "ClaudeSim",
   "applicationCategory": "EducationalApplication",
   "operatingSystem": "Web",
-  "description": "AI Literacy Simulation Platform — Learn Claude by doing through interactive professional scenarios with real-time AI coaching.",
+  "description": "AI Literacy Simulation Platform — 20 interactive simulations across 3 skill tiers: Prompt Engineering, Specification Engineering, and Intent Engineering. Real-time coaching by ARIA.",
   "url": "https://claudesim.app",
+  "inLanguage": ["en", "fr"],
   "author": {"@type": "Organization", "name": "Panda Projet Inc.", "url": "https://pandaprojet.com"},
   "offers": [
-    {"@type": "Offer", "price": "0", "priceCurrency": "USD", "name": "Discovery"},
-    {"@type": "Offer", "price": "19", "priceCurrency": "USD", "name": "Pro Monthly"},
-    {"@type": "Offer", "price": "149", "priceCurrency": "USD", "name": "Pro Lifetime"}
+    {"@type": "Offer", "price": "0", "priceCurrency": "USD", "name": "Discovery — 1 Free Simulation"},
+    {"@type": "Offer", "price": "19", "priceCurrency": "USD", "name": "Pro Monthly — All 20 Scenarios"},
+    {"@type": "Offer", "price": "149", "priceCurrency": "USD", "name": "Pro Lifetime — All Future Scenarios"}
   ]
 }
 </script>
@@ -162,7 +163,17 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba
 
 /* SCENARIOS */
 .scenarios-section { padding: 100px 0; text-align: center; }
-.scenarios-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+.tier-nav { display: flex; justify-content: center; gap: 16px; margin-bottom: 40px; flex-wrap: wrap; }
+.tier-tab { background: var(--bg-card); border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 20px 32px; cursor: pointer; transition: all 0.3s; text-align: center; min-width: 220px; }
+.tier-tab:hover { border-color: var(--border-accent); background: var(--bg-card-hover); transform: translateY(-2px); }
+.tier-tab.active { border-color: #f97316; background: rgba(249,115,22,0.08); box-shadow: 0 4px 20px rgba(249,115,22,0.15); }
+.tier-tab .tier-icon { font-size: 28px; margin-bottom: 6px; }
+.tier-tab .tier-num { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 2px; }
+.tier-tab .tier-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+.tier-tab.active .tier-name { color: #f97316; }
+.tier-tab .tier-count { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.tier-desc { max-width: 700px; margin: 0 auto 32px; padding: 16px 24px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+.scenarios-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 24px; }
 .scenario-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; text-align: left; transition: all 0.3s; }
 .scenario-card:hover { border-color: var(--border-accent); }
 .scenario-meta { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -262,6 +273,9 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .features-grid, .scenarios-grid, .pricing-grid { grid-template-columns: 1fr; }
+  .tier-nav { gap: 10px; }
+  .tier-tab { min-width: 0; flex: 1; padding: 14px 16px; }
+  .tier-tab .tier-name { font-size: 13px; }
   .steps { grid-template-columns: 1fr; }
   .step::after { display: none; }
   .demo-body { grid-template-columns: 1fr; }
@@ -305,9 +319,9 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
       <a href="#how-it-works" class="btn btn-secondary" data-i18n="hero_cta2">See How It Works</a>
     </div>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="hero-stat-num">3</div><div class="hero-stat-label" data-i18n="stat_scenarios">Scenarios</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">20</div><div class="hero-stat-label" data-i18n="stat_scenarios">Scenarios</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">3</div><div class="hero-stat-label" data-i18n="stat_tiers">Skill Tiers</div></div>
       <div class="hero-stat"><div class="hero-stat-num">6</div><div class="hero-stat-label" data-i18n="stat_competencies">Competencies Tracked</div></div>
-      <div class="hero-stat"><div class="hero-stat-num">∞</div><div class="hero-stat-label" data-i18n="stat_practice">Practice Possibilities</div></div>
     </div>
 
     <!-- DEMO PREVIEW -->
@@ -418,7 +432,34 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
   <div class="container">
     <div class="section-label" data-i18n="sc_label">Scenario Catalog</div>
     <h2 class="section-title" data-i18n="sc_title">Real-World <span class="gradient-text">Professional Scenarios</span></h2>
-    <p class="section-subtitle" data-i18n="sc_subtitle">Beginner to Advanced. Communication, Analysis, Strategy, Research, Marketing, Legal.</p>
+    <p class="section-subtitle" data-i18n="sc_subtitle">Three skill tiers. From writing effective prompts to strategic AI delegation.</p>
+
+    <!-- Tier Navigation -->
+    <div class="tier-nav" id="tierNav">
+      <div class="tier-tab active" data-tier="1" onclick="selectTier(1)">
+        <div class="tier-icon">🎯</div>
+        <div class="tier-num" data-i18n="tier_label">Tier 1</div>
+        <div class="tier-name" data-i18n="tier1_name">Prompt Engineering</div>
+        <div class="tier-count" id="tierCount1">8 scenarios</div>
+      </div>
+      <div class="tier-tab" data-tier="2" onclick="selectTier(2)">
+        <div class="tier-icon">📋</div>
+        <div class="tier-num" data-i18n="tier_label2">Tier 2</div>
+        <div class="tier-name" data-i18n="tier2_name">Specification Engineering</div>
+        <div class="tier-count" id="tierCount2">6 scenarios</div>
+      </div>
+      <div class="tier-tab" data-tier="3" onclick="selectTier(3)">
+        <div class="tier-icon">🧭</div>
+        <div class="tier-num" data-i18n="tier_label3">Tier 3</div>
+        <div class="tier-name" data-i18n="tier3_name">Intent Engineering</div>
+        <div class="tier-count" id="tierCount3">6 scenarios</div>
+      </div>
+    </div>
+
+    <!-- Tier Description -->
+    <div class="tier-desc" id="tierDesc" data-i18n="tier1_desc">Learn to write effective prompts that get the best results from Claude. Structure your requests, use advanced techniques, and iterate strategically.</div>
+
+    <!-- Scenario Cards (filtered by selected tier) -->
     <div class="scenarios-grid" id="scenariosGrid">
       <!-- Populated by JS -->
     </div>
@@ -641,7 +682,7 @@ const translations = {
     hero_badge: '🎯 Plateforme de simulation en AI Literacy', hero_title: 'Apprendre <span class="gradient-text">Claude</span> par la pratique',
     hero_subtitle: 'Maîtrisez le prompting IA à travers des simulations professionnelles interactives. Scénarios réels, coaching en temps réel, progression mesurable.',
     hero_cta: 'Simulation gratuite →', hero_cta2: 'Comment ça marche',
-    stat_scenarios: 'Scénarios', stat_competencies: 'Compétences suivies', stat_practice: 'Possibilités de pratique',
+    stat_scenarios: 'Scénarios', stat_tiers: 'Niveaux de compétence', stat_competencies: 'Compétences suivies',
     demo_topbar: 'ClaudeSim — S01 · Rédigez un courriel professionnel d\'annonce de changement',
     demo_you: 'Vous', demo_user_msg: 'Écris-moi un courriel sur la restructuration',
     demo_claude_msg: 'Je serais ravi de vous aider. Pour le rendre efficace, pourriez-vous fournir plus de contexte ? Quel type de restructuration, qui est l\'audience, et quel ton préférez-vous ?',
@@ -662,7 +703,12 @@ const translations = {
     s3_title: 'Coaching', s3_text: 'ARIA observe et suggère des améliorations', s4_title: 'Livraison', s4_text: 'Soumettez votre livrable quand satisfait',
     s5_title: 'Débrief', s5_text: 'Examinez vos scores et recommandations',
     sc_label: 'Catalogue de scénarios', sc_title: 'Scénarios <span class="gradient-text">professionnels réels</span>',
-    sc_subtitle: 'Débutant à Avancé. Communication, Analyse, Stratégie, Recherche, Marketing, Juridique.',
+    sc_subtitle: 'Trois niveaux de compétence. Du prompting efficace à la délégation stratégique avec l\'IA.',
+    tier_label: 'Niveau 1', tier_label2: 'Niveau 2', tier_label3: 'Niveau 3',
+    tier1_name: 'Ingénierie de prompts', tier2_name: 'Ingénierie de spécifications', tier3_name: 'Ingénierie d\'intention',
+    tier1_desc: 'Apprenez à rédiger des prompts efficaces qui obtiennent les meilleurs résultats de Claude. Structurez vos demandes, utilisez des techniques avancées et itérez stratégiquement.',
+    tier2_desc: 'Passez au niveau supérieur : rédigez des spécifications si complètes et sans ambiguïté qu\'une IA peut les exécuter sans poser de questions. Le vrai défi professionnel.',
+    tier3_desc: 'Le niveau le plus élevé : exprimez vos objectifs et contraintes, et laissez l\'IA déterminer la meilleure approche. Maîtrisez la collaboration stratégique avec l\'IA.',
     pr_label: 'Tarifs', pr_title: 'Commencez gratuit, <span class="gradient-text">passez Pro</span>',
     plan_popular: 'LE PLUS POPULAIRE',
     pr_subtitle: 'Essayez votre première simulation gratuitement. Passez à Pro pour un accès illimité.',
@@ -881,29 +927,38 @@ async function handleContact(e) {
 }
 
 // ========================
-// SCENARIOS
+// SCENARIOS — Tier-first navigation
 // ========================
+let allScenarios = [];
+let currentTier = 1;
+
+const tierDescriptions = {
+  en: {
+    1: 'Learn to write effective prompts that get the best results from Claude. Structure your requests, use advanced techniques, and iterate strategically.',
+    2: 'Move beyond prompting: write specifications so complete and unambiguous that an AI can execute them without asking questions. The real professional skill gap.',
+    3: 'The highest level: express your goals and constraints, and let AI determine the best approach. Master strategic AI collaboration and delegation.'
+  },
+  fr: {
+    1: 'Apprenez à rédiger des prompts efficaces qui obtiennent les meilleurs résultats de Claude. Structurez vos demandes, utilisez des techniques avancées et itérez stratégiquement.',
+    2: 'Passez au niveau supérieur : rédigez des spécifications si complètes et sans ambiguïté qu\'une IA peut les exécuter sans poser de questions. Le vrai défi professionnel.',
+    3: 'Le niveau le plus élevé : exprimez vos objectifs et contraintes, et laissez l\'IA déterminer la meilleure approche. Maîtrisez la collaboration stratégique avec l\'IA.'
+  }
+};
+
 async function loadScenarios() {
   try {
     const res = await fetch(`${API}/api/scenarios`);
     const data = await res.json();
-    const grid = document.getElementById('scenariosGrid');
-    const lang = currentLang;
-    grid.innerHTML = data.scenarios.map(s => `
-      <div class="scenario-card">
-        <div class="scenario-meta">
-          <span class="scenario-tag domain">${s.domain}</span>
-          <span class="scenario-tag level">${s.level}</span>
-          ${s.is_free ? '<span class="scenario-tag free">FREE</span>' : '<span class="scenario-tag locked">PRO</span>'}
-        </div>
-        <h3>${lang === 'fr' ? s.title_fr : s.title_en}</h3>
-        <p>${lang === 'fr' ? (s.description_fr || '').substring(0, 120) : (s.description_en || '').substring(0, 120)}...</p>
-        <div class="scenario-footer">
-          <span>⏱ ${s.duration_min} min</span>
-          <div class="scenario-comps">${(s.competencies || []).map(c => `<span class="comp-badge">${c}</span>`).join('')}</div>
-        </div>
-      </div>
-    `).join('');
+    allScenarios = data.scenarios || [];
+
+    // Update tier counts
+    [1,2,3].forEach(t => {
+      const count = allScenarios.filter(s => (s.tier || 1) === t).length;
+      const el = document.getElementById(`tierCount${t}`);
+      if (el) el.textContent = currentLang === 'fr' ? `${count} scénarios` : `${count} scenarios`;
+    });
+
+    renderScenarios();
   } catch(e) {
     // Fallback static content
     document.getElementById('scenariosGrid').innerHTML = `
@@ -911,6 +966,46 @@ async function loadScenarios() {
       <div class="scenario-card"><div class="scenario-meta"><span class="scenario-tag domain">Analysis</span><span class="scenario-tag level">Intermediate</span><span class="scenario-tag locked">PRO</span></div><h3>Analyze Sales Data and Create an Executive Report</h3><p>Produce an executive summary with key insights, trends, and recommendations from Q3 sales data...</p><div class="scenario-footer"><span>⏱ 30 min</span><div class="scenario-comps"><span class="comp-badge">C1</span><span class="comp-badge">C2</span><span class="comp-badge">C3</span><span class="comp-badge">C5</span></div></div></div>
       <div class="scenario-card"><div class="scenario-meta"><span class="scenario-tag domain">Strategy</span><span class="scenario-tag level">Intermediate</span><span class="scenario-tag locked">PRO</span></div><h3>Create a 10-Slide Strategic Presentation for the Board</h3><p>Create a compelling presentation covering market position, competitive analysis, growth strategy...</p><div class="scenario-footer"><span>⏱ 30 min</span><div class="scenario-comps"><span class="comp-badge">C1</span><span class="comp-badge">C2</span><span class="comp-badge">C3</span><span class="comp-badge">C4</span></div></div></div>`;
   }
+}
+
+function selectTier(tier) {
+  currentTier = tier;
+  // GA4: track tier selection
+  gtag('event', 'select_tier', { tier_number: tier, tier_name: tier === 1 ? 'Prompt Engineering' : tier === 2 ? 'Specification Engineering' : 'Intent Engineering' });
+  // Update tab active state
+  document.querySelectorAll('.tier-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tier-tab[data-tier="${tier}"]`)?.classList.add('active');
+  // Update description
+  const descEl = document.getElementById('tierDesc');
+  if (descEl) descEl.textContent = tierDescriptions[currentLang]?.[tier] || tierDescriptions.en[tier];
+  renderScenarios();
+}
+
+function renderScenarios() {
+  const grid = document.getElementById('scenariosGrid');
+  const lang = currentLang;
+  const filtered = allScenarios.filter(s => (s.tier || 1) === currentTier);
+  
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);">${lang === 'fr' ? 'Scénarios bientôt disponibles.' : 'Scenarios coming soon.'}</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(s => `
+    <div class="scenario-card">
+      <div class="scenario-meta">
+        <span class="scenario-tag domain">${s.domain}</span>
+        <span class="scenario-tag level">${s.level}</span>
+        ${s.is_free ? '<span class="scenario-tag free">FREE</span>' : '<span class="scenario-tag locked">PRO</span>'}
+      </div>
+      <h3>${lang === 'fr' ? s.title_fr : s.title_en}</h3>
+      <p>${(lang === 'fr' ? (s.description_fr || '') : (s.description_en || '')).substring(0, 120)}...</p>
+      <div class="scenario-footer">
+        <span>⏱ ${s.duration_min} min</span>
+        <div class="scenario-comps">${(s.competencies || []).map(c => `<span class="comp-badge">${c}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
 }
 
 // ========================

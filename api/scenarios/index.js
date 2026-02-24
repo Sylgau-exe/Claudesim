@@ -20,10 +20,20 @@ export default async function handler(req, res) {
       evaluation_criteria: typeof s.evaluation_criteria === 'string' ? JSON.parse(s.evaluation_criteria) : (s.evaluation_criteria || []),
       competencies: s.competencies || [],
       is_free: s.is_free,
+      tier: s.tier || 1,
+      tier_label_en: s.tier_label_en || 'Prompt Engineering',
+      tier_label_fr: s.tier_label_fr || 'Ingénierie de prompts',
       locked: !s.is_free && (!decoded) // locked if not free and not logged in
     }));
 
-    return res.json({ scenarios: mapped });
+    // Group by tier for frontend convenience
+    const tiers = [
+      { tier: 1, label_en: 'Prompt Engineering', label_fr: 'Ingénierie de prompts', icon: '🎯', scenarios: mapped.filter(s => s.tier === 1) },
+      { tier: 2, label_en: 'Specification Engineering', label_fr: 'Ingénierie de spécifications', icon: '📋', scenarios: mapped.filter(s => s.tier === 2) },
+      { tier: 3, label_en: 'Intent Engineering', label_fr: 'Ingénierie d\'intention', icon: '🧭', scenarios: mapped.filter(s => s.tier === 3) }
+    ].filter(t => t.scenarios.length > 0);
+
+    return res.json({ scenarios: mapped, tiers });
   } catch (error) {
     console.error('Scenarios error:', error);
     return res.status(500).json({ error: 'Failed to fetch scenarios' });

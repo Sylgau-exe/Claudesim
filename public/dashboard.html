@@ -60,6 +60,15 @@ main{padding:40px 0;}
 
 /* SCENARIOS */
 .scenarios-section h2{font-size:20px;font-weight:700;margin-bottom:20px;}
+.dash-tier-nav{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.dash-tier-tab{background:var(--bg-card);border:2px solid var(--border);border-radius:10px;padding:12px 20px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:10px;flex:1;min-width:180px;}
+.dash-tier-tab:hover{border-color:var(--border-accent);background:var(--bg-card-hover);}
+.dash-tier-tab.active{border-color:#f97316;background:rgba(249,115,22,0.08);}
+.dash-tier-tab .dt-icon{font-size:20px;}
+.dash-tier-tab .dt-info{display:flex;flex-direction:column;}
+.dash-tier-tab .dt-name{font-size:13px;font-weight:700;color:var(--text-primary);}
+.dash-tier-tab.active .dt-name{color:#f97316;}
+.dash-tier-tab .dt-count{font-size:11px;color:var(--text-muted);}
 .scenario-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:40px;}
 .sc-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all 0.3s;cursor:pointer;}
 .sc-card:hover{border-color:var(--border-accent);transform:translateY(-2px);}
@@ -92,7 +101,7 @@ main{padding:40px 0;}
 .toast{position:fixed;top:60px;right:20px;padding:12px 20px;border-radius:8px;font-size:14px;z-index:100;transform:translateX(150%);transition:transform 0.3s;}
 .toast.show{transform:translateX(0);}.toast.success{background:#065f46;color:#a7f3d0;border:1px solid #10b981;}.toast.error{background:#7f1d1d;color:#fecaca;border:1px solid #ef4444;}
 
-@media(max-width:768px){.stats-grid{grid-template-columns:repeat(2,1fr);}.comp-grid{grid-template-columns:repeat(3,1fr);}.scenario-list{grid-template-columns:1fr;}}
+@media(max-width:768px){.stats-grid{grid-template-columns:repeat(2,1fr);}.comp-grid{grid-template-columns:repeat(3,1fr);}.scenario-list{grid-template-columns:1fr;}.dash-tier-nav{flex-direction:column;}.dash-tier-tab{min-width:0;}}
 </style>
 </head>
 <body>
@@ -139,6 +148,20 @@ main{padding:40px 0;}
   <!-- AVAILABLE SCENARIOS -->
   <div class="scenarios-section">
     <h2 data-i18n="dash_scenarios">Available Scenarios</h2>
+    <div class="dash-tier-nav" id="dashTierNav">
+      <div class="dash-tier-tab active" data-tier="1" onclick="selectDashTier(1)">
+        <span class="dt-icon">🎯</span>
+        <div class="dt-info"><span class="dt-name" data-i18n="tier1_dash">Prompt Engineering</span><span class="dt-count" id="dashTierCount1">—</span></div>
+      </div>
+      <div class="dash-tier-tab" data-tier="2" onclick="selectDashTier(2)">
+        <span class="dt-icon">📋</span>
+        <div class="dt-info"><span class="dt-name" data-i18n="tier2_dash">Specification Engineering</span><span class="dt-count" id="dashTierCount2">—</span></div>
+      </div>
+      <div class="dash-tier-tab" data-tier="3" onclick="selectDashTier(3)">
+        <span class="dt-icon">🧭</span>
+        <div class="dt-info"><span class="dt-name" data-i18n="tier3_dash">Intent Engineering</span><span class="dt-count" id="dashTierCount3">—</span></div>
+      </div>
+    </div>
     <div class="scenario-list" id="scenarioList"></div>
   </div>
 
@@ -164,6 +187,7 @@ const i18n = {
     dash_sub: 'Continuez votre parcours en littératie IA',
     dash_total: 'Sessions totales', dash_completed: 'Complétées', dash_avg: 'Score moyen', dash_remaining: 'Simulations restantes',
     dash_comp: 'Vos compétences', dash_scenarios: 'Scénarios disponibles', dash_history: 'Historique des sessions',
+    tier1_dash: 'Ingénierie de prompts', tier2_dash: 'Ingénierie de spécifications', tier3_dash: 'Ingénierie d\'intention',
     c1: 'Clarté', c2: 'Techniques', c3: 'Itération', c4: 'Esprit critique', c5: 'Efficacité', c6: 'Éthique',
     th_scenario: 'Scénario', th_domain: 'Domaine', th_status: 'Statut', th_score: 'Score', th_date: 'Date',
     btn_resume: 'Reprendre', btn_debrief: 'Débrief',
@@ -257,40 +281,82 @@ async function loadDashboard() {
   } catch(e) { console.error('Dashboard error:', e); }
 }
 
+let dashAllScenarios = [];
+let dashCurrentTier = 1;
+
 async function loadScenarios() {
   try {
     const res = await fetch(`${API}/api/scenarios`);
     const data = await res.json();
-    const list = document.getElementById('scenarioList');
+    dashAllScenarios = data.scenarios || [];
     const isFreeUsed = userData.plan === 'free' && !userData.isAdmin && (parseInt(userData.simulationsUsed) || 0) >= 1;
-    list.innerHTML = data.scenarios.map(s => {
-      const locked = !userData.isAdmin && userData.plan === 'free' && (!s.is_free || isFreeUsed);
-      return `
-      <div class="sc-card${locked ? ' locked' : ''}" onclick="startScenario(${s.id}, ${s.is_free})" style="${locked ? 'opacity:0.7;' : ''}">
-        <div class="sc-meta">
-          <span class="sc-tag domain">${s.domain}</span>
-          <span class="sc-tag level">${s.level}</span>
-          ${s.is_free && !isFreeUsed ? '<span class="sc-tag free">FREE</span>' : locked ? '<span class="sc-tag pro">🔒 PRO</span>' : ''}
-        </div>
-        <h3>${lang === 'fr' ? s.title_fr : s.title_en}</h3>
-        <p>${(lang === 'fr' ? (s.description_fr || s.description_en) : s.description_en).substring(0, 100)}...</p>
-        <div class="sc-footer">
-          <span>⏱ ${s.duration_min} min</span>
-          <span>${(s.competencies || []).join(', ')}</span>
-        </div>
-      </div>`;
-    }).join('');
+
+    // Update tier counts
+    [1,2,3].forEach(t => {
+      const count = dashAllScenarios.filter(s => (s.tier || 1) === t).length;
+      const el = document.getElementById(`dashTierCount${t}`);
+      if (el) el.textContent = lang === 'fr' ? `${count} scénarios` : `${count} scenarios`;
+    });
+
+    renderDashScenarios(isFreeUsed);
   } catch(e) { console.error('Scenarios error:', e); }
+}
+
+function selectDashTier(tier) {
+  dashCurrentTier = tier;
+  gtag('event', 'select_tier', { tier_number: tier, tier_name: tier === 1 ? 'Prompt Engineering' : tier === 2 ? 'Specification Engineering' : 'Intent Engineering', page: 'dashboard' });
+  document.querySelectorAll('.dash-tier-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.dash-tier-tab[data-tier="${tier}"]`)?.classList.add('active');
+  const isFreeUsed = userData.plan === 'free' && !userData.isAdmin && (parseInt(userData.simulationsUsed) || 0) >= 1;
+  renderDashScenarios(isFreeUsed);
+}
+
+function renderDashScenarios(isFreeUsed) {
+  const list = document.getElementById('scenarioList');
+  const filtered = dashAllScenarios.filter(s => (s.tier || 1) === dashCurrentTier);
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);">${lang === 'fr' ? 'Scénarios bientôt disponibles.' : 'Scenarios coming soon.'}</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(s => {
+    const locked = !userData.isAdmin && userData.plan === 'free' && (!s.is_free || isFreeUsed);
+    return `
+    <div class="sc-card${locked ? ' locked' : ''}" onclick="startScenario(${s.id}, ${s.is_free})" style="${locked ? 'opacity:0.7;' : ''}">
+      <div class="sc-meta">
+        <span class="sc-tag domain">${s.domain}</span>
+        <span class="sc-tag level">${s.level}</span>
+        ${s.is_free && !isFreeUsed ? '<span class="sc-tag free">FREE</span>' : locked ? '<span class="sc-tag pro">🔒 PRO</span>' : ''}
+      </div>
+      <h3>${lang === 'fr' ? s.title_fr : s.title_en}</h3>
+      <p>${(lang === 'fr' ? (s.description_fr || s.description_en) : s.description_en).substring(0, 100)}...</p>
+      <div class="sc-footer">
+        <span>⏱ ${s.duration_min} min</span>
+        <span>${(s.competencies || []).join(', ')}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function startScenario(id, isFree) {
   if (userData.plan === 'free' && !userData.isAdmin) {
     const used = parseInt(userData.simulationsUsed) || 0;
     if (!isFree || used >= 1) {
+      gtag('event', 'upgrade_prompt', { scenario_id: id, tier: dashCurrentTier });
       showUpgradeModal();
       return;
     }
   }
+  // Find scenario details for GA4
+  const sc = dashAllScenarios.find(s => s.id === id);
+  gtag('event', 'start_simulation', {
+    scenario_id: id,
+    scenario_code: sc?.code || '',
+    tier_number: sc?.tier || dashCurrentTier,
+    domain: sc?.domain || '',
+    level: sc?.level || ''
+  });
   window.location.href = `/simulation?scenario=${id}`;
 }
 
