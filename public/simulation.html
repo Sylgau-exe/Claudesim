@@ -501,7 +501,7 @@ function applyLearnLang() {
 }
 
 function initLearnVideo() {
-  const videoId = window.CLAUDESIM_LEARN_VIDEO || 'LAF-lACf2QY';
+  const videoId = lang === 'fr' ? 'H89bSRvuY14' : 'LAF-lACf2QY';
   if (videoId) {
     document.getElementById('learnVideoWrap').innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
   }
