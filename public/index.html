@@ -104,9 +104,12 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba
 .nav-user-name { font-size: 14px; color: var(--text-secondary); }
 
 /* HERO */
-.hero { padding: 160px 0 100px; text-align: center; position: relative; overflow: hidden; }
-.hero::before { content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; background: radial-gradient(ellipse, rgba(37,99,235,0.12) 0%, transparent 70%); pointer-events: none; }
-.hero h1 { font-size: clamp(36px, 5vw, 64px); font-weight: 800; line-height: 1.1; margin: 20px 0 24px; }
+.hero { padding: 100px 0 60px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { display: none; }
+.hero-banner { max-width: 1200px; margin: 0 auto 2rem; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.hero-banner img { width: 100%; height: auto; display: block; }
+.hero h1 { display: none; }
+.hero .badge { display: none; }
 .hero p { font-size: 20px; color: var(--text-secondary); max-width: 600px; margin: 0 auto 36px; }
 .hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
 .hero-stats { display: flex; gap: 48px; justify-content: center; margin-top: 60px; }
@@ -291,6 +294,9 @@ footer { padding: 48px 0 32px; border-top: 1px solid var(--border); }
 <!-- HERO -->
 <section class="hero">
   <div class="container">
+    <div class="hero-banner">
+      <img src="/Claudesim.png" alt="Don't Watch AI Tutorials. JUST LIVE IT! - ClaudeSim AI Literacy Training" />
+    </div>
     <span class="badge" data-i18n="hero_badge">🎯 AI Literacy Simulation Platform</span>
     <h1 data-i18n="hero_title">Learn <span class="gradient-text">Claude</span> by Doing</h1>
     <p data-i18n="hero_subtitle">Master AI prompting through interactive professional simulations. Real scenarios, real-time coaching, measurable skill progression.</p>
