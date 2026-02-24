@@ -801,7 +801,7 @@ async function handleReset(e) {
 function updateNavAuth() {
   const navAuth = document.getElementById('navAuth');
   if (currentUser) {
-    navAuth.innerHTML = `<div class="nav-user"><span class="nav-user-name">${currentUser.name}</span><a href="/dashboard" class="btn btn-primary nav-cta">Dashboard</a></div>`;
+    navAuth.innerHTML = `<div class="nav-user"><span class="nav-user-name">${currentUser.name}</span><a href="/dashboard" class="btn btn-primary nav-cta">Dashboard</a><button onclick="logout()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;font-family:inherit;">↪</button></div>`;
     // Update hero CTAs to go to dashboard instead of showing register modal
     const heroCta = document.getElementById('heroCta');
     if (heroCta) { heroCta.onclick = () => window.location.href = '/dashboard'; heroCta.textContent = lang === 'fr' ? 'Aller au tableau de bord →' : 'Go to Dashboard →'; }

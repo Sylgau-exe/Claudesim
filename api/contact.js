@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
   try {
     await resend.emails.send({
-      from: 'ClaudeSim <noreply@pandaprojet.com>',
+      from: process.env.FROM_EMAIL || 'ClaudeSim <noreply@bizsimlive.com>',
       to: 'sylgauthier@gmail.com',
       replyTo: email,
       subject,
