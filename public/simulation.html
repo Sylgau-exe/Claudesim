@@ -488,12 +488,21 @@ function showBriefScreen() {
 }
 
 const LEARN_TR = {
-  en: { back:'Back to Dashboard', step:'📚 Step 1 of 2 — Learn', title:'Before You Start', subtitle:'Watch this 5-minute introduction to prompt engineering. Understanding the basics will help you get much better scores in your simulation.', video_placeholder:'Video coming soon', tip1_title:'Be Specific', tip1_desc:"Give Claude context, constraints, and the exact format you want. Vague prompts = vague results.", tip2_title:'Iterate', tip2_desc:"Don't expect perfection on prompt #1. Review the output, refine, and re-prompt. That's the skill.", tip3_title:'Think Critically', tip3_desc:"Don't accept everything Claude says. Question it, ask for sources, verify claims. That's competency.", continue:'Continue to Briefing →', skip:'Skip — I know the basics' },
-  fr: { back:'Retour au tableau de bord', step:'📚 Étape 1 sur 2 — Apprendre', title:'Avant de commencer', subtitle:"Regardez cette introduction de 5 minutes à l'ingénierie de prompts. Comprendre les bases vous aidera à obtenir de bien meilleurs scores dans votre simulation.", video_placeholder:'Vidéo à venir', tip1_title:'Soyez précis', tip1_desc:"Donnez à Claude du contexte, des contraintes et le format exact souhaité. Prompts vagues = résultats vagues.", tip2_title:'Itérez', tip2_desc:"N'attendez pas la perfection au prompt #1. Examinez le résultat, affinez et re-promptez. C'est ça la compétence.", tip3_title:'Pensez de façon critique', tip3_desc:"N'acceptez pas tout ce que Claude dit. Questionnez, demandez des sources, vérifiez les affirmations.", continue:'Continuer vers le briefing →', skip:'Passer — Je connais les bases' }
+  en: {
+    1: { back:'Back to Dashboard', step:'📚 Step 1 of 2 — Learn', title:'Before You Start', subtitle:'Watch this 5-minute introduction to prompt engineering. Understanding the basics will help you get much better scores in your simulation.', video_placeholder:'Video coming soon', tip1_title:'Be Specific', tip1_desc:"Give Claude context, constraints, and the exact format you want. Vague prompts = vague results.", tip2_title:'Iterate', tip2_desc:"Don't expect perfection on prompt #1. Review the output, refine, and re-prompt. That's the skill.", tip3_title:'Think Critically', tip3_desc:"Don't accept everything Claude says. Question it, ask for sources, verify claims. That's competency.", continue:'Continue to Briefing →', skip:'Skip — I know the basics' },
+    2: { back:'Back to Dashboard', step:'📚 Step 1 of 2 — Learn', title:'Before You Start', subtitle:'Watch this 5-minute introduction to specification engineering — writing briefs so complete that AI can execute them without asking questions.', video_placeholder:'Video coming soon', tip1_title:'Define "Done"', tip1_desc:"Every deliverable needs acceptance criteria. If you can't test it, AI can't execute it.", tip2_title:'Cover Edge Cases', tip2_desc:"What happens when the data is missing? When the user does something unexpected? If your spec doesn't say, AI will guess.", tip3_title:'Be Literal', tip3_desc:"AI follows your spec word-for-word. 'Handle complaints appropriately' means nothing. Define what 'appropriately' looks like.", continue:'Continue to Briefing →', skip:'Skip — I know the basics' },
+    3: { back:'Back to Dashboard', step:'📚 Step 1 of 2 — Learn', title:'Before You Start', subtitle:'Watch this 5-minute introduction to intent engineering — expressing outcomes and constraints so AI can determine the best approach autonomously.', video_placeholder:'Video coming soon', tip1_title:'Define the What, Not the How', tip1_desc:"Tell AI the outcome you want and the constraints you have. Let it figure out the strategy.", tip2_title:'Set Success Metrics', tip2_desc:"'Increase retention' is vague. 'From 72% to 85% in 12 months under $200K budget' is actionable intent.", tip3_title:'Set Guardrails', tip3_desc:"Give AI freedom within boundaries. Define what it must NOT do — that's as important as the goal.", continue:'Continue to Briefing →', skip:'Skip — I know the basics' }
+  },
+  fr: {
+    1: { back:'Retour au tableau de bord', step:'📚 Étape 1 sur 2 — Apprendre', title:'Avant de commencer', subtitle:"Regardez cette introduction de 5 minutes à l'ingénierie de prompts. Comprendre les bases vous aidera à obtenir de bien meilleurs scores dans votre simulation.", video_placeholder:'Vidéo à venir', tip1_title:'Soyez précis', tip1_desc:"Donnez à Claude du contexte, des contraintes et le format exact souhaité. Prompts vagues = résultats vagues.", tip2_title:'Itérez', tip2_desc:"N'attendez pas la perfection au prompt #1. Examinez le résultat, affinez et re-promptez. C'est ça la compétence.", tip3_title:'Pensez de façon critique', tip3_desc:"N'acceptez pas tout ce que Claude dit. Questionnez, demandez des sources, vérifiez les affirmations.", continue:'Continuer vers le briefing →', skip:'Passer — Je connais les bases' },
+    2: { back:'Retour au tableau de bord', step:'📚 Étape 1 sur 2 — Apprendre', title:'Avant de commencer', subtitle:"Regardez cette introduction de 5 minutes à l'ingénierie de spécifications — rédiger des briefs si complets que l'IA peut les exécuter sans poser de questions.", video_placeholder:'Vidéo à venir', tip1_title:'Définissez « Terminé »', tip1_desc:"Chaque livrable a besoin de critères d'acceptation. Si vous ne pouvez pas le tester, l'IA ne peut pas l'exécuter.", tip2_title:'Couvrez les cas limites', tip2_desc:"Que se passe-t-il si les données manquent ? Si l'utilisateur fait quelque chose d'inattendu ? Si votre spec ne le dit pas, l'IA va deviner.", tip3_title:'Soyez littéral', tip3_desc:"L'IA suit votre spécification mot pour mot. « Gérer les plaintes de façon appropriée » ne veut rien dire. Définissez ce que « approprié » signifie.", continue:'Continuer vers le briefing →', skip:'Passer — Je connais les bases' },
+    3: { back:'Retour au tableau de bord', step:'📚 Étape 1 sur 2 — Apprendre', title:'Avant de commencer', subtitle:"Regardez cette introduction de 5 minutes à l'ingénierie d'intention — exprimer des résultats et des contraintes pour que l'IA détermine la meilleure approche de façon autonome.", video_placeholder:'Vidéo à venir', tip1_title:'Définissez le Quoi, pas le Comment', tip1_desc:"Dites à l'IA le résultat souhaité et vos contraintes. Laissez-la déterminer la stratégie.", tip2_title:'Fixez des métriques de succès', tip2_desc:"« Augmenter la rétention » est vague. « De 72 % à 85 % en 12 mois avec un budget de 200K $ » est une intention actionnable.", tip3_title:'Posez des garde-fous', tip3_desc:"Donnez de la liberté à l'IA dans des limites. Définissez ce qu'elle ne DOIT PAS faire — c'est aussi important que l'objectif.", continue:'Continuer vers le briefing →', skip:'Passer — Je connais les bases' }
+  }
 };
 
 function applyLearnLang() {
-  const tr = LEARN_TR[lang] || LEARN_TR.en;
+  const tier = (scenarioData && scenarioData.tier) || 1;
+  const tr = (LEARN_TR[lang] && LEARN_TR[lang][tier]) || LEARN_TR.en[tier] || LEARN_TR.en[1];
   document.querySelectorAll('[data-learn]').forEach(el => {
     const key = el.getAttribute('data-learn');
     if (tr[key]) el.textContent = tr[key];
@@ -501,9 +510,22 @@ function applyLearnLang() {
 }
 
 function initLearnVideo() {
-  const videoId = lang === 'fr' ? 'H89bSRvuY14' : 'LAF-lACf2QY';
+  const tier = (scenarioData && scenarioData.tier) || 1;
+  // Video IDs per tier per language — replace placeholders with real YouTube IDs when ready
+  const videoIds = {
+    en: { 1: 'LAF-lACf2QY', 2: '', 3: '' },
+    fr: { 1: 'H89bSRvuY14', 2: '', 3: '' }
+  };
+  const videoId = (videoIds[lang] && videoIds[lang][tier]) || videoIds.en[tier] || '';
+  const wrap = document.getElementById('learnVideoWrap');
   if (videoId) {
-    document.getElementById('learnVideoWrap').innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    wrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  } else {
+    // Placeholder for tiers without videos yet
+    const tierNames = { 1: 'Prompt Engineering', 2: 'Specification Engineering', 3: 'Intent Engineering' };
+    const tierNamesFr = { 1: 'Ingénierie de prompts', 2: 'Ingénierie de spécifications', 3: "Ingénierie d'intention" };
+    const name = lang === 'fr' ? tierNamesFr[tier] : tierNames[tier];
+    wrap.innerHTML = `<div class="learn-video-placeholder"><div class="play-icon">🎬</div><div style="font-size:16px;font-weight:700;">${name}</div><div style="font-size:14px;">${lang === 'fr' ? 'Vidéo à venir' : 'Video coming soon'}</div></div>`;
   }
 }
 
