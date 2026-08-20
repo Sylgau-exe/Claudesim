@@ -4,7 +4,7 @@ import { getUserFromRequest, cors } from '../../lib/auth.js';
 import { SessionDB, InteractionDB } from '../../lib/db.js';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const CLAUDE_MODEL = process.env.CLAUDE_MODEL || 'claude-sonnet-4-20250514';
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL || 'claude-sonnet-4-6';
 
 const DEBRIEF_SYSTEM = `You are ARIA, the AI literacy coach. Generate a comprehensive debrief report for a simulation session.
 
