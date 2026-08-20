@@ -5,7 +5,7 @@ import { getUserFromRequest, cors } from '../../lib/auth.js';
 import { SessionDB, InteractionDB } from '../../lib/db.js';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const CLAUDE_MODEL = process.env.CLAUDE_MODEL || 'claude-sonnet-4-20250514';
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL || 'claude-sonnet-4-6';
 
 // ARIA system prompt — the coaching engine
 const ARIA_SYSTEM_PROMPT = `You are ARIA (AI Readiness & Interaction Advisor), an expert coach in AI prompting and strategic use of Claude.
